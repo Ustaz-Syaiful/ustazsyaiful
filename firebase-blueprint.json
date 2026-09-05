@@ -1,0 +1,93 @@
+{
+  "entities": {
+    "RphItem": {
+      "title": "RphItem",
+      "description": "Rekod Rancangan Pengajaran Harian (e-RPH)",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "week": { "type": "number" },
+        "day": { "type": "string" },
+        "date": { "type": "string" },
+        "time": { "type": "string" },
+        "period": { "type": "string" },
+        "className": { "type": "string" },
+        "subject": { "type": "string" },
+        "subjectCategory": { "type": "string" },
+        "topic": { "type": "string" },
+        "learningStandard": { "type": "string" },
+        "contentStandard": { "type": "string" },
+        "objectives": { "type": "string" },
+        "successCriteria": { "type": "string" },
+        "activities": { "type": "string" },
+        "teachingAids": { "type": "string" },
+        "moralValues": { "type": "string" },
+        "assessmentMethod": { "type": "string" },
+        "reflection": { "type": "string" },
+        "status": { "type": "string", "enum": ["Lengkap", "Deraf", "Disemak PGB"] },
+        "studentAttendance": { "type": "string" },
+        "preferredScript": { "type": "string", "enum": ["rumi", "jawi"] },
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "week", "day", "date", "className", "subject", "topic"]
+    },
+    "PbdStudent": {
+      "title": "PbdStudent",
+      "description": "Rekod Pentaksiran Bilik Darjah (PBD) Murid",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "studentNumber": { "type": "string" },
+        "className": { "type": "string" },
+        "yearLevel": { "type": "string" },
+        "tpAlQuran": { "type": "number" },
+        "tpJawi": { "type": "number" },
+        "tpAkidah": { "type": "number" },
+        "tpIbadah": { "type": "number" },
+        "tpSirah": { "type": "number" },
+        "tpAkhlak": { "type": "number" },
+        "notes": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "className", "yearLevel"]
+    },
+    "TasmikRecord": {
+      "title": "TasmikRecord",
+      "description": "Rekod Bacaan Tasmik Al-Quran Murid",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "studentId": { "type": "string" },
+        "studentName": { "type": "string" },
+        "className": { "type": "string" },
+        "surah": { "type": "string" },
+        "juzuk": { "type": "number" },
+        "ayatStart": { "type": "number" },
+        "ayatEnd": { "type": "number" },
+        "page": { "type": "number" },
+        "performanceLevel": { "type": "string" },
+        "teacherNotes": { "type": "string" },
+        "date": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "studentName", "className", "surah", "date"]
+    }
+  },
+  "firestore": {
+    "/rph/{rphId}": {
+      "schema": "RphItem",
+      "description": "Koleksi rekod rancangan pengajaran harian guru"
+    },
+    "/pbd_students/{studentId}": {
+      "schema": "PbdStudent",
+      "description": "Koleksi data rekod pentaksiran bilik darjah murid"
+    },
+    "/tasmik_records/{recordId}": {
+      "schema": "TasmikRecord",
+      "description": "Koleksi rekod catatan bacaan tasmik murid"
+    }
+  }
+}

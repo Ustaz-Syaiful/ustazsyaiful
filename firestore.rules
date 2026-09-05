@@ -1,0 +1,64 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default-deny all paths by default
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'g-77071151@moe-dl.edu.my' ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    // Koleksi e-RPH
+    match /rph/{rphId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(rphId);
+      allow update: if isSignedIn() && isValidId(rphId);
+      allow delete: if isSignedIn() && isValidId(rphId);
+    }
+
+    // Koleksi PBD Murid
+    match /pbd_students/{studentId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(studentId);
+      allow update: if isSignedIn() && isValidId(studentId);
+      allow delete: if isSignedIn() && isValidId(studentId);
+    }
+
+    // Koleksi Tasmik Murid
+    match /tasmik_records/{recordId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(recordId);
+      allow update: if isSignedIn() && isValidId(recordId);
+      allow delete: if isSignedIn() && isValidId(recordId);
+    }
+
+    // Senarai Pentadbir
+    match /admins/{adminId} {
+      allow read: if isSignedIn();
+      allow write: if isSuperAdmin();
+    }
+  }
+}

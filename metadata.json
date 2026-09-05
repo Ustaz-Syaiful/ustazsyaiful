@@ -1,0 +1,7 @@
+{
+  "name": "Portal Rasmi Guru Pendidikan Islam",
+  "description": "Laman web rasmi Guru Pendidikan Islam (GPI) merangkumi modul Utama, Kurikulum, HEM, Kokurikulum, dan Umum dengan e-RPH, PBD, e-Tasmik, Waktu Solat, dan sumber PdPc.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
