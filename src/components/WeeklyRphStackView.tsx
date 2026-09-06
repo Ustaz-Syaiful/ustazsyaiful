@@ -37,6 +37,7 @@ import { exportWeeklyRphToPdf, PdfExportProgress } from '../utils/pdfExportHelpe
 import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
 import { getJawiRph } from '../utils/jawiConverter';
 import { DatePickerField } from './DatePickerField';
+import { saveOrUpdateRptFromRph } from '../utils/rptStorage';
 
 export type DayKey = 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
 
@@ -313,7 +314,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     }
   };
 
-  // Save selected e-RPH items to persistence
+  // 1. Save selected e-RPH items to persistence (e-RPH sahaja)
   const handleSaveAll = () => {
     const slotsToSave: RPHItem[] = [];
     groupedByDay.forEach((dayGroup) => {
@@ -326,6 +327,23 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
       onSaveRph(item, idx !== 0);
     });
     setSaveSuccessMsg(`${slotsToSave.length} e-RPH berjaya disimpan!`);
+    setTimeout(() => setSaveSuccessMsg(null), 3500);
+  };
+
+  // 2. Save selected e-RPH items to both e-RPH and RPT (Kekal)
+  const handleSaveAllWithRpt = () => {
+    const slotsToSave: RPHItem[] = [];
+    groupedByDay.forEach((dayGroup) => {
+      dayGroup.slots.forEach(({ rph }) => {
+        slotsToSave.push(rph);
+      });
+    });
+
+    slotsToSave.forEach((item, idx) => {
+      saveOrUpdateRptFromRph(item);
+      onSaveRph(item, idx !== 0);
+    });
+    setSaveSuccessMsg(`${slotsToSave.length} e-RPH & RPT Tahunan berjaya dikemaskini secara kekal!`);
     setTimeout(() => setSaveSuccessMsg(null), 3500);
   };
 
@@ -588,15 +606,28 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               <span>CETAK ({totalSelectedSlots} e-RPH)</span>
             </button>
 
-            {/* Simpan Semua */}
+            {/* 1. Butang Simpan Sedia Ada: e-RPH Sahaja */}
             <button
               type="button"
               onClick={handleSaveAll}
               disabled={totalSelectedSlots === 0}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow disabled:opacity-50"
+              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-300 border border-emerald-500/40 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow disabled:opacity-50"
+              title="Simpan perubahan di e-RPH sahaja"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>SIMPAN ({totalSelectedSlots} e-RPH)</span>
+              <span>SIMPAN e-RPH ({totalSelectedSlots})</span>
+            </button>
+
+            {/* 2. Butang Simpan Baharu: e-RPH & RPT Tahunan */}
+            <button
+              type="button"
+              onClick={handleSaveAllWithRpt}
+              disabled={totalSelectedSlots === 0}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow disabled:opacity-50 ring-1 ring-cyan-300/60"
+              title="Simpan perubahan di e-RPH dan kemaskini Rancangan Pengajaran Tahunan (RPT) secara kekal"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-950" />
+              <span>SIMPAN e-RPH & RPT ({totalSelectedSlots})</span>
             </button>
 
             {/* Reset ke RPT */}

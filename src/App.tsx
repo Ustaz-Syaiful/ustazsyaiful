@@ -68,6 +68,7 @@ import {
   deleteRphFromFirestore,
   subscribeToRph
 } from './firebase/firestoreService';
+import { saveOrUpdateRptFromRph } from './utils/rptStorage';
 
 const STORAGE_KEY = 'portal_gpi_app_data_v2';
 
@@ -437,7 +438,7 @@ export default function App() {
     setRphModalData({ isOpen: true, rph });
   };
 
-  const handleSaveRph = (savedRph: RPHItem, silent: boolean = false) => {
+  const handleSaveRph = (savedRph: RPHItem, silent: boolean = false, options?: { syncRpt?: boolean }) => {
     setRphList((prev) => {
       const existingIdx = prev.findIndex((r) => r.id === savedRph.id);
       if (existingIdx >= 0) {
@@ -448,6 +449,10 @@ export default function App() {
       return [savedRph, ...prev];
     });
 
+    if (options?.syncRpt) {
+      saveOrUpdateRptFromRph(savedRph);
+    }
+
     if (isFirebaseConfigured()) {
       saveRphToFirestore(savedRph).catch((err) => {
         console.warn('Ralat menyimpan e-RPH ke Firestore:', err);
@@ -455,8 +460,17 @@ export default function App() {
     }
 
     if (!silent) {
-      showToast(`RPH "${savedRph.topic}" berjaya disimpan.`);
+      if (options?.syncRpt) {
+        showToast(`e-RPH "${savedRph.topic}" & RPT Tahunan berjaya dikemaskini kekal.`);
+      } else {
+        showToast(`e-RPH "${savedRph.topic}" berjaya disimpan.`);
+      }
     }
+  };
+
+  const handleSaveRphWithRpt = (savedRph: RPHItem) => {
+    saveOrUpdateRptFromRph(savedRph);
+    handleSaveRph(savedRph, false, { syncRpt: true });
   };
 
   const handleDeleteRph = (id: string) => {
@@ -935,6 +949,7 @@ export default function App() {
           onClose={() => setRphModalData({ isOpen: false, rph: null })}
           rph={rphModalData.rph}
           onSave={handleSaveRph}
+          onSaveWithRpt={handleSaveRphWithRpt}
         />
       )}
 

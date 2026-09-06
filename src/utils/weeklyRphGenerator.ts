@@ -1,10 +1,7 @@
 import { RPHItem, ScriptType, RptItem } from '../types';
-import { allRptDataTahun1 } from '../data/rptTahun1Data';
-import { allRptDataTahun2 } from '../data/rptTahun2Data';
-import { allRptDataTahun3 } from '../data/rptTahun3Data';
-import { allRptDataTahun6 } from '../data/rptTahun6Data';
 import { createTasmikRph } from '../data/tasmikConstants';
 import { getJawiRph } from '../utils/jawiConverter';
+import { findRptForSlotWithCustom } from './rptStorage';
 
 export interface WeeklySlotConfig {
   slotNumber: number; // 1 to 15
@@ -344,60 +341,7 @@ export function getSundayForWeek(week: number, baseSundayStr: string = '2026-01-
  * Finds appropriate RPT item for a given slot configuration and week.
  */
 function findRptForSlot(config: WeeklySlotConfig, week: number): RptItem | undefined {
-  let rptPool: RptItem[] = [];
-
-  switch (config.yearLevel) {
-    case 'Tahun 1':
-      rptPool = allRptDataTahun1;
-      break;
-    case 'Tahun 2':
-      rptPool = allRptDataTahun2;
-      break;
-    case 'Tahun 3':
-      rptPool = allRptDataTahun3;
-      break;
-    case 'Tahun 6':
-      rptPool = allRptDataTahun6;
-      break;
-    default:
-      rptPool = allRptDataTahun6;
-  }
-
-  // 1. Exact week match
-  const weekItems = rptPool.filter((item) => item.week === week);
-
-  if (weekItems.length > 0) {
-    // Try matching category
-    if (config.category === 'JAWI') {
-      const jawiItem = weekItems.find(
-        (i) =>
-          i.subjectCategory === 'Jawi' ||
-          (i.topicTitle && i.topicTitle.toLowerCase().includes('jawi')) ||
-          (i.timeSlot && i.timeSlot.includes('جاوي'))
-      );
-      if (jawiItem) return jawiItem;
-    } else if (config.category === 'ULUM') {
-      const ulumItem = weekItems.find(
-        (i) =>
-          ['Akidah', 'Ibadah', 'Sirah', 'Adab', 'Hadis'].includes(i.subjectCategory) ||
-          i.subjectCategory === config.subjectCategoryRpt
-      );
-      if (ulumItem) return ulumItem;
-    } else if (config.category === 'AQ') {
-      const aqItem = weekItems.find(
-        (i) =>
-          ['Al-Quran', 'Tafsir/Kefahaman', 'Tajwid'].includes(i.subjectCategory) ||
-          i.timeSlot.includes('القرءان')
-      );
-      if (aqItem) return aqItem;
-    }
-
-    // Default to first item in week
-    return weekItems[0];
-  }
-
-  // Fallback if week has no specific items
-  return rptPool.find((i) => i.subjectCategory === config.subjectCategoryRpt) || rptPool[0];
+  return findRptForSlotWithCustom(config, week);
 }
 
 /**

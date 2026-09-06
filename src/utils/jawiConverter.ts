@@ -960,6 +960,9 @@ export const SCRIPT_LABELS = {
     printBtn: 'Cetak Rasmi',
     copyBtn: 'Salin Teks',
     saveBtn: 'Simpan e-RPH',
+    saveOnlyBtn: 'Simpan e-RPH Sahaja',
+    saveWithRptBtn: 'Simpan e-RPH & RPT',
+    saveWithRptDesc: 'Simpan perubahan ke e-RPH dan kemaskini RPT Tahunan secara kekal',
     cancelBtn: 'Batal',
     scriptOption: 'Pilihan Skrip Tulisan e-RPH:',
     autoConvert: '✨ Auto-Tukar Rumi ➡️ Jawi DBP'
@@ -992,6 +995,9 @@ export const SCRIPT_LABELS = {
     printBtn: 'چيتق دوکومن رسمي',
     copyBtn: 'سالين تيک س',
     saveBtn: 'سيمڤن e-RPH',
+    saveOnlyBtn: 'سيمڤن e-RPH سهاج',
+    saveWithRptBtn: 'سيمڤن e-RPH & RPT',
+    saveWithRptDesc: 'سيمڤن ک e-RPH دان کماس کيني RPT تاهونن سچارا ککل',
     cancelBtn: 'باتل',
     scriptOption: 'ڤيليهن سکريڤ توليسن e-RPH:',
     autoConvert: '✨ توکر رومي ➡️ جاوي DBP'

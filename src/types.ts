@@ -81,6 +81,7 @@ export interface RPHItem {
   crossCurricularElements: string[]; // Elemen Merentas Kurikulum (EMK)
   pbdAssessment: string; // Pentaksiran Bilik Darjah
   reflection: string;
+  notes?: string;
   status: 'Lengkap' | 'Deraf' | 'Disemak PGB';
   preferredScript?: ScriptType;
   jawiOverrides?: {

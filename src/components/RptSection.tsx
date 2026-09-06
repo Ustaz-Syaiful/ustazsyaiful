@@ -1,9 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { RptItem } from '../types';
-import { allRptDataTahun6 } from '../data/rptTahun6Data';
-import { allRptDataTahun1, rptTahun1Metadata } from '../data/rptTahun1Data';
-import { allRptDataTahun2 } from '../data/rptTahun2Data';
-import { allRptDataTahun3 } from '../data/rptTahun3Data';
+import { rptTahun1Metadata } from '../data/rptTahun1Data';
+import { getAllRptForYear } from '../utils/rptStorage';
 import {
   BookOpen,
   Search,
@@ -46,21 +44,20 @@ export const RptSection: React.FC<RptSectionProps> = ({
   const [activeItemDetails, setActiveItemDetails] = useState<RptItem | null>(null);
   const [scriptMode, setScriptMode] = useState<'jawi' | 'rumi'>('jawi');
 
-  // Active dataset based on selected year level
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  useEffect(() => {
+    const handleRptUpdate = () => {
+      setRefreshKey((k) => k + 1);
+    };
+    window.addEventListener('rpt_updated', handleRptUpdate);
+    return () => window.removeEventListener('rpt_updated', handleRptUpdate);
+  }, []);
+
+  // Active dataset based on selected year level (merged with custom persistent updates)
   const activeDataset = useMemo(() => {
-    switch (selectedYearLevel) {
-      case 'Tahun 1':
-        return allRptDataTahun1;
-      case 'Tahun 2':
-        return allRptDataTahun2;
-      case 'Tahun 3':
-        return allRptDataTahun3;
-      case 'Tahun 6':
-        return allRptDataTahun6;
-      default:
-        return allRptDataTahun1;
-    }
-  }, [selectedYearLevel]);
+    return getAllRptForYear(selectedYearLevel);
+  }, [selectedYearLevel, refreshKey]);
 
   // Filter items based on selected criteria
   const filteredRpt = useMemo(() => {

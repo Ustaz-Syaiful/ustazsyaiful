@@ -38,19 +38,22 @@ import {
   createTasmikRph,
   TASMIK_OFFICIAL_DATA
 } from '../data/tasmikConstants';
+import { saveOrUpdateRptFromRph } from '../utils/rptStorage';
 
 interface RphModalProps {
   isOpen: boolean;
   onClose: () => void;
   rph: RPHItem | null;
-  onSave: (savedRph: RPHItem) => void;
+  onSave: (savedRph: RPHItem, options?: { syncRpt?: boolean }) => void;
+  onSaveWithRpt?: (savedRph: RPHItem) => void;
 }
 
 export const RphModal: React.FC<RphModalProps> = ({
   isOpen,
   onClose,
   rph,
-  onSave
+  onSave,
+  onSaveWithRpt
 }) => {
   const isEditing = Boolean(rph?.id);
 
@@ -373,9 +376,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
     setTimeout(() => setCopyFeedback(false), 2000);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const buildFinalRph = (): RPHItem => {
     let updatedReflection = formData.reflection;
     let updatedJawiReflection = jawiState.reflection;
 
@@ -384,7 +385,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
       updatedJawiReflection = `${masteredCount} / ${totalStudents} اورغ موريد دافت مغواساءي أوجبيكتيف فمبالجرن دان دبري التيهن فغايأن / فغوكوهن.\n${unmasteredCount} / ${totalStudents} اورغ موريد تيدق دافت مغواساءي اوجبيكتيف فمبالجرن دان دبري التيهن فموليهن.${selectedTangguhReasons.length > 0 ? `\nتڠݢوه: ${selectedTangguhReasons.join('، ')}` : ''}`;
     }
 
-    const finalRph: RPHItem = {
+    return {
       ...formData,
       reflection: updatedReflection,
       preferredScript: activeScript,
@@ -393,8 +394,32 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
         reflection: updatedJawiReflection
       }
     };
-    onSave(finalRph);
+  };
+
+  // 1. Simpan di e-RPH Sahaja
+  const handleSaveOnly = (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const finalRph = buildFinalRph();
+    onSave(finalRph, { syncRpt: false });
     onClose();
+  };
+
+  // 2. Simpan di e-RPH dan di RPT (Kekal)
+  const handleSaveWithRpt = (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) e.preventDefault();
+    const finalRph = buildFinalRph();
+    // Simpan ke RPT secara kekal
+    saveOrUpdateRptFromRph(finalRph);
+    if (onSaveWithRpt) {
+      onSaveWithRpt(finalRph);
+    } else {
+      onSave(finalRph, { syncRpt: true });
+    }
+    onClose();
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    handleSaveOnly(e);
   };
 
   const currentTasmikData = isJawi ? TASMIK_OFFICIAL_DATA.jawi : TASMIK_OFFICIAL_DATA.rumi;
@@ -1462,7 +1487,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </select>
             </div>
 
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={handleDownloadPdf}
@@ -1475,16 +1500,31 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold rounded-lg transition font-tech"
+                className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold text-xs rounded-lg transition font-tech"
               >
                 {labels.cancelBtn}
               </button>
+              
+              {/* 1. Butang Simpan Sedia Ada: Simpan Perubahan di e-RPH Sahaja */}
               <button
-                type="submit"
-                className="px-5 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold rounded-lg transition flex items-center space-x-1.5 shadow-md font-tech"
+                type="button"
+                onClick={handleSaveOnly}
+                className="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-xs rounded-lg transition flex items-center space-x-1.5 shadow-md font-tech"
+                title="Simpan perubahan pada rekod e-RPH sahaja"
               >
                 <Save className="w-4 h-4" />
-                <span>{labels.saveBtn} ({activeScript.toUpperCase()})</span>
+                <span>{labels.saveOnlyBtn || labels.saveBtn} ({activeScript.toUpperCase()})</span>
+              </button>
+
+              {/* 2. Butang Simpan Baharu: Simpan Perubahan di e-RPH dan di RPT (Kekal) */}
+              <button
+                type="button"
+                onClick={handleSaveWithRpt}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-600 to-emerald-600 hover:from-cyan-500 hover:to-emerald-500 text-white font-bold text-xs rounded-lg transition flex items-center space-x-1.5 shadow-md font-tech ring-2 ring-cyan-400/40"
+                title={labels.saveWithRptDesc || 'Simpan perubahan di e-RPH dan di Rancangan Pengajaran Tahunan (RPT) secara kekal'}
+              >
+                <Sparkles className="w-4 h-4 text-amber-300" />
+                <span>{labels.saveWithRptBtn || 'Simpan e-RPH & RPT'} ({activeScript.toUpperCase()})</span>
               </button>
             </div>
           </div>
