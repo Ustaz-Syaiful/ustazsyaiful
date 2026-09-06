@@ -141,10 +141,20 @@ export function findRptForSlotWithCustom(config: WeeklySlotConfig, week: number)
  */
 export function detectYearLevelFromClass(className?: string): string {
   if (!className) return 'Tahun 1';
-  if (className.includes('1') || className.toLowerCase().includes('tahun 1')) return 'Tahun 1';
-  if (className.includes('2') || className.toLowerCase().includes('tahun 2')) return 'Tahun 2';
-  if (className.includes('3') || className.toLowerCase().includes('tahun 3')) return 'Tahun 3';
-  if (className.includes('6') || className.toLowerCase().includes('tahun 6') || className.includes('4')) return 'Tahun 6';
+  const norm = className.toLowerCase();
+  if (norm.includes('tahun 1') || norm.includes('1 ibnu') || norm.includes('1 is') || norm.includes('1 ik') || norm.includes('١')) return 'Tahun 1';
+  if (norm.includes('tahun 2') || norm.includes('2 ibnu') || norm.includes('2 is') || norm.includes('2 ik') || norm.includes('٢')) return 'Tahun 2';
+  if (norm.includes('tahun 3') || norm.includes('3 ibnu') || norm.includes('3 is') || norm.includes('3 ik') || norm.includes('٣')) return 'Tahun 3';
+  if (norm.includes('tahun 4') || norm.includes('4 ibnu') || norm.includes('4 is') || norm.includes('4 ik') || norm.includes('٤')) return 'Tahun 4';
+  if (norm.includes('tahun 5') || norm.includes('5 ibnu') || norm.includes('5 is') || norm.includes('5 ik') || norm.includes('٥')) return 'Tahun 5';
+  if (norm.includes('tahun 6') || norm.includes('6 ibnu') || norm.includes('6 is') || norm.includes('6 ik') || norm.includes('٦')) return 'Tahun 6';
+
+  if (norm.includes('1')) return 'Tahun 1';
+  if (norm.includes('2')) return 'Tahun 2';
+  if (norm.includes('3')) return 'Tahun 3';
+  if (norm.includes('4')) return 'Tahun 4';
+  if (norm.includes('5')) return 'Tahun 5';
+  if (norm.includes('6')) return 'Tahun 6';
   return 'Tahun 1';
 }
 
@@ -161,13 +171,41 @@ export function saveOrUpdateRptFromRph(rph: RPHItem): RptItem {
 
   let targetRpt: RptItem | undefined;
 
-  // Try matching by subjectCategory
+  // Try matching by subjectCategory or learningArea
   if (weekItems.length > 0) {
-    targetRpt = weekItems.find((i) => i.subjectCategory === (rph.learningArea as any));
+    const area = (rph.learningArea || '').toLowerCase();
+    targetRpt = weekItems.find((i) => {
+      const cat = (i.subjectCategory || '').toLowerCase();
+      if (cat === area) return true;
+      if (area.includes('quran') && (cat.includes('quran') || cat.includes('tajwid') || cat.includes('tilawah'))) return true;
+      if (area.includes('jawi') && cat.includes('jawi')) return true;
+      if (area.includes('ulum') && ['akidah', 'ibadah', 'sirah', 'adab', 'hadis'].includes(cat)) return true;
+      return false;
+    });
+
     if (!targetRpt) {
       targetRpt = weekItems[0];
     }
   }
+
+  // Prioritize active script or jawiOverrides if present
+  const isJawi = rph.preferredScript === 'jawi' || Boolean(rph.jawiOverrides);
+  const overrides = rph.jawiOverrides || {};
+
+  const topicTitle = (isJawi && overrides.topic) ? overrides.topic : (rph.topic || targetRpt?.topicTitle || '');
+  const contentStandard = (isJawi && overrides.contentStandard) ? overrides.contentStandard : (rph.contentStandard || targetRpt?.contentStandard || '');
+  const learningStandard = (isJawi && overrides.learningStandard) ? overrides.learningStandard : (rph.learningStandard || targetRpt?.learningStandard || '');
+  const objectives = (isJawi && overrides.objectives && overrides.objectives.length > 0)
+    ? overrides.objectives
+    : (rph.objectives && rph.objectives.length > 0 ? rph.objectives : (targetRpt?.objectives || []));
+  const activities = (isJawi && overrides.mainActivities && overrides.mainActivities.length > 0)
+    ? overrides.mainActivities
+    : (rph.mainActivities && rph.mainActivities.length > 0 ? rph.mainActivities : (targetRpt?.activities || []));
+  const emk = (isJawi && overrides.crossCurricularElements && overrides.crossCurricularElements[0])
+    || (rph.crossCurricularElements && rph.crossCurricularElements[0])
+    || targetRpt?.emk
+    || 'Nilai Murni';
+  const assessment = (isJawi && overrides.pbdAssessment) || rph.pbdAssessment || targetRpt?.assessment || 'Lisan & Bertulis';
 
   const rptId = targetRpt?.id || `rpt-custom-${yearLevel.replace(/\s+/g, '')}-w${rph.week}-${rph.learningArea || 'Umum'}`;
 
@@ -176,14 +214,14 @@ export function saveOrUpdateRptFromRph(rph: RPHItem): RptItem {
     yearLevel,
     week: rph.week,
     timeSlot: targetRpt?.timeSlot || `${rph.learningArea} (${rph.time || '60 Minit'})`,
-    subjectCategory: (rph.learningArea as any) || targetRpt?.subjectCategory || 'Al-Quran',
-    topicTitle: rph.topic,
-    contentStandard: rph.contentStandard,
-    learningStandard: rph.learningStandard,
-    objectives: rph.objectives && rph.objectives.length > 0 ? rph.objectives : targetRpt?.objectives || [],
-    activities: rph.mainActivities && rph.mainActivities.length > 0 ? rph.mainActivities : targetRpt?.activities || [],
-    emk: (rph.crossCurricularElements && rph.crossCurricularElements[0]) || targetRpt?.emk || 'Nilai Murni',
-    assessment: rph.pbdAssessment || targetRpt?.assessment || 'Lisan & Bertulis',
+    subjectCategory: targetRpt?.subjectCategory || (rph.learningArea as any) || 'Al-Quran',
+    topicTitle,
+    contentStandard,
+    learningStandard,
+    objectives,
+    activities,
+    emk,
+    assessment,
     kbat: targetRpt?.kbat || 'Mengaplikasi & Menganalisis',
     notes: rph.notes || targetRpt?.notes || `Dikemaskini daripada e-RPH Minggu ${rph.week}`
   };

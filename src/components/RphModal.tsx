@@ -385,12 +385,48 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
       updatedJawiReflection = `${masteredCount} / ${totalStudents} اورغ موريد دافت مغواساءي أوجبيكتيف فمبالجرن دان دبري التيهن فغايأن / فغوكوهن.\n${unmasteredCount} / ${totalStudents} اورغ موريد تيدق دافت مغواساءي اوجبيكتيف فمبالجرن دان دبري التيهن فموليهن.${selectedTangguhReasons.length > 0 ? `\nتڠݢوه: ${selectedTangguhReasons.join('، ')}` : ''}`;
     }
 
+    const isCurrentlyJawi = activeScript === 'jawi';
+
+    const finalTopic = isCurrentlyJawi ? (jawiState.topic || formData.topic) : formData.topic;
+    const finalContentStandard = isCurrentlyJawi ? (jawiState.contentStandard || formData.contentStandard) : formData.contentStandard;
+    const finalLearningStandard = isCurrentlyJawi ? (jawiState.learningStandard || formData.learningStandard) : formData.learningStandard;
+    const finalObjectives = isCurrentlyJawi && jawiState.objectives && jawiState.objectives.length > 0 ? jawiState.objectives : formData.objectives;
+    const finalSuccessCriteria = isCurrentlyJawi && jawiState.successCriteria && jawiState.successCriteria.length > 0 ? jawiState.successCriteria : formData.successCriteria;
+    const finalInduction = isCurrentlyJawi ? (jawiState.inductionActivity || formData.inductionActivity) : formData.inductionActivity;
+    const finalMainActivities = isCurrentlyJawi && jawiState.mainActivities && jawiState.mainActivities.length > 0 ? jawiState.mainActivities : formData.mainActivities;
+    const finalClosure = isCurrentlyJawi ? (jawiState.closureActivity || formData.closureActivity) : formData.closureActivity;
+    const finalTeachingAids = isCurrentlyJawi && jawiState.teachingAids && jawiState.teachingAids.length > 0 ? jawiState.teachingAids : formData.teachingAids;
+    const finalEmk = isCurrentlyJawi && jawiState.crossCurricularElements && jawiState.crossCurricularElements.length > 0 ? jawiState.crossCurricularElements : formData.crossCurricularElements;
+    const finalPbd = isCurrentlyJawi ? (jawiState.pbdAssessment || formData.pbdAssessment) : formData.pbdAssessment;
+
     return {
       ...formData,
+      topic: finalTopic,
+      contentStandard: finalContentStandard,
+      learningStandard: finalLearningStandard,
+      objectives: finalObjectives,
+      successCriteria: finalSuccessCriteria,
+      inductionActivity: finalInduction,
+      mainActivities: finalMainActivities,
+      closureActivity: finalClosure,
+      teachingAids: finalTeachingAids,
+      crossCurricularElements: finalEmk,
+      pbdAssessment: finalPbd,
       reflection: updatedReflection,
       preferredScript: activeScript,
       jawiOverrides: {
         ...jawiState,
+        topic: finalTopic,
+        contentStandard: finalContentStandard,
+        learningStandard: finalLearningStandard,
+        objectives: finalObjectives,
+        successCriteria: finalSuccessCriteria,
+        inductionActivity: finalInduction,
+        mainActivities: finalMainActivities,
+        closureActivity: finalClosure,
+        teachingAids: finalTeachingAids,
+        crossCurricularElements: finalEmk,
+        pbdAssessment: finalPbd,
         reflection: updatedJawiReflection
       }
     };
@@ -400,6 +436,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
   const handleSaveOnly = (e?: React.FormEvent | React.MouseEvent) => {
     if (e) e.preventDefault();
     const finalRph = buildFinalRph();
+    window.dispatchEvent(new CustomEvent('rph_saved', { detail: finalRph }));
     onSave(finalRph, { syncRpt: false });
     onClose();
   };
@@ -410,6 +447,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
     const finalRph = buildFinalRph();
     // Simpan ke RPT secara kekal
     saveOrUpdateRptFromRph(finalRph);
+    window.dispatchEvent(new CustomEvent('rph_saved', { detail: finalRph }));
     if (onSaveWithRpt) {
       onSaveWithRpt(finalRph);
     } else {
@@ -859,7 +897,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                           <>
                             <p className="font-jawi text-sm">.1 ممباخ كلمة / اية دان سورة/ اقرا دغن بيمبيغن ضورو.</p>
                             <p className="font-jawi text-sm">.2 ممباخ اية درفد سورة دغن بتول.</p>
-                            <p className="font-jawi text-sm">.3 ممباخ سورة دغن بتول دان مغيكوت مخرج سرتا برجتويد.</p>
+                            <p className="font-jawi text-sm">.3 ممباخ سورة دغن بتول دان مغيكوت مخرج سرتا برتجويد.</p>
                           </>
                         ) : (
                           <>
@@ -890,7 +928,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                         {isJawi ? (
                           <>
                             <p className="font-jawi text-sm">.1 ضورو مندغر باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو</p>
-                            <p className="font-jawi text-sm">.2 التيه توبي مثبوت/ممباخ كلمة، فوتوغن اية سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو دغن بتول دان برجتويد.</p>
+                            <p className="font-jawi text-sm">.2 التيه توبي مثبوت/ممباخ كلمة، فوتوغن اية سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو دغن بتول دان برتجويد.</p>
                             <p className="font-jawi text-sm">.3 تسميع باخاءن سخارا اينديؤيدو (think pair share) دان دامل كومفولن (round robin).</p>
                             <p className="font-jawi text-sm">.4 ممفردغركن باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا تلقي مشافهة</p>
                           </>

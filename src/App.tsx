@@ -449,6 +449,8 @@ export default function App() {
       return [savedRph, ...prev];
     });
 
+    window.dispatchEvent(new CustomEvent('rph_saved', { detail: savedRph }));
+
     if (options?.syncRpt) {
       saveOrUpdateRptFromRph(savedRph);
     }

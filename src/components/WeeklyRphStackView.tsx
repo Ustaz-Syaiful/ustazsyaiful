@@ -90,10 +90,40 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     return generateWeekly15Rph(initialWeek, defaultSunday, activeScript, allRphList);
   });
 
-  // Re-generate or sync when week or anchor Sunday changes
+  // Re-generate or sync when week, anchor Sunday, active script, or saved RPH list changes
   useEffect(() => {
     setWeeklyRphs(generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList));
-  }, [selectedWeek, anchorSunday, activeScript]);
+  }, [selectedWeek, anchorSunday, activeScript, allRphList]);
+
+  // Live listener: immediately update local weeklyRphs slot when an e-RPH is saved
+  useEffect(() => {
+    const handleRphSaved = (e: Event) => {
+      const customEvent = e as CustomEvent<RPHItem>;
+      if (customEvent.detail) {
+        const saved = customEvent.detail;
+        setWeeklyRphs((prev) => {
+          const idx = prev.findIndex((item) => item.id === saved.id);
+          if (idx >= 0) {
+            const next = [...prev];
+            next[idx] = saved;
+            return next;
+          }
+          return prev;
+        });
+      }
+    };
+    window.addEventListener('rph_saved', handleRphSaved);
+    return () => window.removeEventListener('rph_saved', handleRphSaved);
+  }, []);
+
+  // Live listener: re-generate if RPT was updated elsewhere
+  useEffect(() => {
+    const handleRptSync = () => {
+      setWeeklyRphs(generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList));
+    };
+    window.addEventListener('rpt_updated', handleRptSync);
+    return () => window.removeEventListener('rpt_updated', handleRptSync);
+  }, [selectedWeek, anchorSunday, activeScript, allRphList]);
 
   // Handle ESC key to exit Fit to Screen mode
   useEffect(() => {
