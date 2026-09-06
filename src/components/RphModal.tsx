@@ -55,7 +55,7 @@ export const RphModal: React.FC<RphModalProps> = ({
   const isEditing = Boolean(rph?.id);
 
   // Active script selection: 'rumi' or 'jawi'
-  const [activeScript, setActiveScript] = useState<ScriptType>(rph?.preferredScript || 'rumi');
+  const [activeScript, setActiveScript] = useState<ScriptType>(rph?.preferredScript || 'jawi');
   const [isFitToScreen, setIsFitToScreen] = useState<boolean>(true);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
 
@@ -92,7 +92,7 @@ export const RphModal: React.FC<RphModalProps> = ({
       pbdAssessment: 'Pentaksiran Lisan & Bacaan Bertajwid (Tahap Penguasaan TP3 & TP4)',
       reflection: '33/35 orang murid berjaya membaca ayat 1-10 dengan betul. 2 orang murid diberi bimbingan tasmik pemulihan.',
       status: 'Lengkap',
-      preferredScript: 'rumi'
+      preferredScript: 'jawi'
     }
   );
 

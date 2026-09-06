@@ -406,7 +406,7 @@ function findRptForSlot(config: WeeklySlotConfig, week: number): RptItem | undef
 export function generateWeekly15Rph(
   week: number,
   startDateString: string,
-  preferredScript: ScriptType = 'rumi',
+  preferredScript: ScriptType = 'jawi',
   existingList: RPHItem[] = []
 ): RPHItem[] {
   return WEEKLY_15_SLOTS.map((config) => {

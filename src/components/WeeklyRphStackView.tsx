@@ -19,7 +19,9 @@ import {
   UserCheck,
   Award,
   FileDown,
-  ExternalLink
+  ExternalLink,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 import { RPHItem, ScriptType } from '../types';
 import {
@@ -35,6 +37,21 @@ import { exportWeeklyRphToPdf, PdfExportProgress } from '../utils/pdfExportHelpe
 import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
 import { getJawiRph } from '../utils/jawiConverter';
 import { DatePickerField } from './DatePickerField';
+
+export type DayKey = 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
+
+export const DAY_SELECTION_ITEMS: Array<{
+  key: DayKey;
+  label: string;
+  count: number;
+  dayIndex: number;
+}> = [
+  { key: 'AHAD', label: 'AHAD', count: 4, dayIndex: 0 },
+  { key: 'ISNIN', label: 'ISNIN', count: 3, dayIndex: 1 },
+  { key: 'SELASA', label: 'SELASA', count: 4, dayIndex: 2 },
+  { key: 'RABU', label: 'RABU', count: 2, dayIndex: 3 },
+  { key: 'KHAMIS', label: 'KHAMIS', count: 2, dayIndex: 4 }
+];
 
 interface WeeklyRphStackViewProps {
   initialWeek?: number;
@@ -58,7 +75,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
   const [startDate, setStartDate] = useState<string>(defaultSunday);
   const [endDate, setEndDate] = useState<string>(() => addDaysToDate(defaultSunday, 4));
 
-  const [activeScript, setActiveScript] = useState<ScriptType>('rumi');
+  const [activeScript, setActiveScript] = useState<ScriptType>('jawi');
   const [isFitToScreen, setIsFitToScreen] = useState<boolean>(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const [pdfProgress, setPdfProgress] = useState<PdfExportProgress | null>(null);
@@ -90,12 +107,28 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
   const isJawi = activeScript === 'jawi';
 
-  // Handle week change: updates Sunday and Thursday (5 days default)
+  // Selected days state: di-tick setiap hari sebagai default
+  const [selectedDays, setSelectedDays] = useState<Record<DayKey, boolean>>({
+    AHAD: true,
+    ISNIN: true,
+    SELASA: true,
+    RABU: true,
+    KHAMIS: true
+  });
+
+  // Handle week change: updates Sunday and Thursday (5 days default) and resets ticks to all days
   const handleWeekChange = (newWeek: number) => {
     setSelectedWeek(newWeek);
     const sun = getSundayForWeek(newWeek);
     setStartDate(sun);
     setEndDate(addDaysToDate(sun, 4)); // Default 5 days Ahad - Khamis
+    setSelectedDays({
+      AHAD: true,
+      ISNIN: true,
+      SELASA: true,
+      RABU: true,
+      KHAMIS: true
+    });
   };
 
   // Handle start date picker change
@@ -114,43 +147,65 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     }
   };
 
-  // Quick Presets
-  const handleSetPreset = (type: '5days' | 'ahad' | 'isnin' | 'selasa' | 'rabu' | 'khamis') => {
-    const sun = getSundayOfWeek(startDate);
-    if (type === '5days') {
+  // Check if all days are ticked
+  const isAllDaysTicked = useMemo(() => {
+    return DAY_SELECTION_ITEMS.every((d) => selectedDays[d.key]);
+  }, [selectedDays]);
+
+  // Toggle tick for a single day
+  const handleToggleDay = (day: DayKey) => {
+    setSelectedDays((prev) => {
+      const nextVal = !prev[day];
+      const next = { ...prev, [day]: nextVal };
+
+      // If user is ticking a day ON, ensure date range covers this day
+      if (nextVal) {
+        const conf = DAY_SELECTION_ITEMS.find((d) => d.key === day);
+        if (conf) {
+          const dDate = getDateForDayIndex(anchorSunday, conf.dayIndex);
+          if (dDate < startDate) setStartDate(dDate);
+          if (dDate > endDate) setEndDate(dDate);
+        }
+      }
+
+      return next;
+    });
+  };
+
+  // Select all days or untick all
+  const handleSelectAllDays = () => {
+    if (isAllDaysTicked) {
+      // Untick all so user can choose individual day easily
+      setSelectedDays({
+        AHAD: false,
+        ISNIN: false,
+        SELASA: false,
+        RABU: false,
+        KHAMIS: false
+      });
+    } else {
+      // Tick all 5 days by default & set full 5-day span (Ahad - Khamis)
+      setSelectedDays({
+        AHAD: true,
+        ISNIN: true,
+        SELASA: true,
+        RABU: true,
+        KHAMIS: true
+      });
+      const sun = getSundayOfWeek(startDate);
       setStartDate(sun);
       setEndDate(addDaysToDate(sun, 4));
-    } else if (type === 'ahad') {
-      const d = getDateForDayIndex(sun, 0);
-      setStartDate(d);
-      setEndDate(d);
-    } else if (type === 'isnin') {
-      const d = getDateForDayIndex(sun, 1);
-      setStartDate(d);
-      setEndDate(d);
-    } else if (type === 'selasa') {
-      const d = getDateForDayIndex(sun, 2);
-      setStartDate(d);
-      setEndDate(d);
-    } else if (type === 'rabu') {
-      const d = getDateForDayIndex(sun, 3);
-      setStartDate(d);
-      setEndDate(d);
-    } else if (type === 'khamis') {
-      const d = getDateForDayIndex(sun, 4);
-      setStartDate(d);
-      setEndDate(d);
     }
   };
 
-  // Group slots by day based on the selected date range
+  // Group slots by day based on the selected date range and ticked days
   const { groupedByDay, totalSelectedSlots, totalSelectedDays } = useMemo(() => {
     const baseDays: Array<{
       day: 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
       dayJawi: string;
       dayIndex: number;
       date: string;
-      slots: Array<{ config: WeeklySlotConfig; rph: RPHItem }>;
+      slots: Array<{ config: WeeklySlotConfig; rph: RPHItem; displayIndex: number }>;
     }> = [
       {
         day: 'AHAD',
@@ -190,12 +245,17 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     ];
 
     WEEKLY_15_SLOTS.forEach((config) => {
+      // 1. Check if day is ticked by user - unticked days are excluded from view, print, and download
+      if (!selectedDays[config.day as DayKey]) {
+        return;
+      }
+
       const rph =
         weeklyRphs[config.slotNumber - 1] ||
         generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList)[config.slotNumber - 1];
       const slotDate = getDateForDayIndex(anchorSunday, config.dayIndex);
 
-      // Include slot if its date is within [startDate, endDate]
+      // 2. Include slot if its date is within [startDate, endDate]
       if (slotDate >= startDate && slotDate <= endDate) {
         const targetDay = baseDays.find((d) => d.day === config.day);
         if (targetDay && rph) {
@@ -204,22 +264,32 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
             rph: {
               ...rph,
               date: slotDate
-            }
+            },
+            displayIndex: 0
           });
         }
       }
     });
 
-    // Only return days that contain at least one slot in range
+    // Only return days that contain at least one slot in range and are ticked
     const activeDays = baseDays.filter((d) => d.slots.length > 0);
     const totalSlots = activeDays.reduce((acc, d) => acc + d.slots.length, 0);
+
+    // Assign continuous sequential display number (1 to totalSlots) according to displayed e-RPH
+    let runningDisplayIndex = 0;
+    activeDays.forEach((dayGroup) => {
+      dayGroup.slots.forEach((slotItem) => {
+        runningDisplayIndex += 1;
+        slotItem.displayIndex = runningDisplayIndex;
+      });
+    });
 
     return {
       groupedByDay: activeDays,
       totalSelectedSlots: totalSlots,
       totalSelectedDays: activeDays.length
     };
-  }, [weeklyRphs, startDate, endDate, selectedWeek, anchorSunday, activeScript, allRphList]);
+  }, [weeklyRphs, startDate, endDate, selectedDays, selectedWeek, anchorSunday, activeScript, allRphList]);
 
   // Update a single slot in local state
   const handleUpdateSlot = (slotIndex: number, updatedFields: Partial<RPHItem>) => {
@@ -399,60 +469,58 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               />
             </div>
 
-            {/* Quick Presets: 5 Hari (Ahad-Khamis), Ahad, Isnin, Selasa, Rabu, Khamis */}
-            <div className="flex items-center space-x-1 bg-slate-900/70 p-1 rounded-xl border border-cyan-500/25 text-[10px] font-tech">
+            {/* Pilihan Hari (Tickable Checkboxes) - Default Semua Hari Di-tick */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/80 p-1.5 rounded-xl border border-cyan-500/30 text-xs font-tech">
               <button
                 type="button"
-                onClick={() => handleSetPreset('5days')}
-                className={`px-2 py-1 rounded-lg font-bold transition ${
-                  totalSelectedDays === 5
-                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 shadow'
-                    : 'text-slate-300 hover:text-cyan-300 hover:bg-slate-800'
+                onClick={handleSelectAllDays}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 border ${
+                  isAllDaysTicked
+                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 border-cyan-300 shadow-md'
+                    : 'bg-slate-950 text-cyan-300 hover:bg-slate-800 border-cyan-500/40'
                 }`}
-                title="Pilih 5 Hari Penuh Persekolahan (Ahad hingga Khamis)"
+                title={isAllDaysTicked ? 'Nyahpilih (Untick) Semua Hari' : 'Tick Semua 5 Hari (Ahad - Khamis)'}
               >
-                5 HARI (AHAD-KHAMIS)
+                {isAllDaysTicked ? (
+                  <CheckSquare className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+                ) : (
+                  <Square className="w-3.5 h-3.5 text-cyan-400" />
+                )}
+                <span>5 HARI (SEMUA)</span>
               </button>
-              <button
-                type="button"
-                onClick={() => handleSetPreset('ahad')}
-                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
-                title="Pilih Hari Ahad sahaja (4 slot)"
-              >
-                AHAD
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSetPreset('isnin')}
-                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
-                title="Pilih Hari Isnin sahaja (3 slot)"
-              >
-                ISNIN
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSetPreset('selasa')}
-                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
-                title="Pilih Hari Selasa sahaja (4 slot)"
-              >
-                SELASA
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSetPreset('rabu')}
-                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
-                title="Pilih Hari Rabu sahaja (2 slot)"
-              >
-                RABU
-              </button>
-              <button
-                type="button"
-                onClick={() => handleSetPreset('khamis')}
-                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
-                title="Pilih Hari Khamis sahaja (2 slot)"
-              >
-                KHAMIS
-              </button>
+
+              <div className="h-4 w-px bg-cyan-500/20 mx-0.5 hidden sm:block" />
+
+              {DAY_SELECTION_ITEMS.map(({ key, label, count }) => {
+                const isTicked = selectedDays[key];
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => handleToggleDay(key)}
+                    className={`px-2 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 border ${
+                      isTicked
+                        ? 'bg-cyan-950/90 border-cyan-400 text-cyan-200 ring-1 ring-cyan-500/30 shadow'
+                        : 'bg-slate-950/40 border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-700'
+                    }`}
+                    title={`Klik untuk ${isTicked ? 'nyahpilih (untick)' : 'pilih (tick)'} Hari ${label} (${count} slot)`}
+                  >
+                    {isTicked ? (
+                      <CheckSquare className="w-3.5 h-3.5 text-cyan-400 shrink-0 stroke-[2.5]" />
+                    ) : (
+                      <Square className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                    )}
+                    <span className={isTicked ? 'text-white' : 'text-slate-500'}>{label}</span>
+                    <span
+                      className={`text-[10px] px-1 py-0.2 rounded font-mono ${
+                        isTicked ? 'bg-cyan-900/60 text-cyan-300' : 'bg-slate-900 text-slate-600'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Tulisan Toggle (Rumi / Jawi) */}
@@ -573,17 +641,17 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         {groupedByDay.length === 0 ? (
           <div className="p-8 text-center bg-slate-900/50 rounded-2xl border border-cyan-500/30 space-y-2 font-tech">
             <p className="text-sm text-cyan-300">
-              Tiada slot e-RPH pada julat tarikh yang dipilih ({startDate} hingga {endDate}).
+              Tiada slot e-RPH pada hari atau julat tarikh yang dipilih ({startDate} hingga {endDate}).
             </p>
             <p className="text-xs text-slate-400">
-              Sila pilih julat tarikh dalam hari persekolahan (Ahad hingga Khamis).
+              Sila pastikan sekurang-kurangnya satu hari persekolahan (Ahad hingga Khamis) di-tick.
             </p>
             <button
               type="button"
-              onClick={() => handleSetPreset('5days')}
-              className="mt-2 px-4 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 rounded-xl text-xs font-bold hover:bg-cyan-500/30 transition"
+              onClick={handleSelectAllDays}
+              className="mt-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 rounded-xl text-xs font-bold hover:brightness-110 transition shadow"
             >
-              Set Semula ke 5 Hari Penuh (Ahad - Khamis)
+              Tick Semua Hari (Ahad - Khamis)
             </button>
           </div>
         ) : (
@@ -604,10 +672,11 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
               {/* Individual e-RPH Cards - Strictly 1 e-RPH 1 Page */}
               <div className="space-y-6">
-                {dayGroup.slots.map(({ config, rph }) => {
+                {dayGroup.slots.map(({ config, rph, displayIndex }) => {
                   const slotIndex = config.slotNumber - 1;
                   const isTasmik = config.isTasmik || isTasmikRph(rph);
                   const displayItem = isJawi ? getJawiRph(rph) : rph;
+                  const currentSlotNumber = displayIndex || config.slotNumber;
 
                   // Tasmik standard data
                   const tasmikData = isJawi ? TASMIK_OFFICIAL_DATA.jawi : TASMIK_OFFICIAL_DATA.rumi;
@@ -622,8 +691,11 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                     {/* Header: Slot Badge, Day, Date, Time, Class, Subject */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-500/25 pb-3.5 print:border-black">
                       <div className="flex items-center space-x-2">
-                        <span className="px-3 py-1 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-tech shadow">
-                          SLOT {config.slotNumber} / 15
+                        <span
+                          className="px-3 py-1 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-tech shadow"
+                          title={`Slot ${currentSlotNumber} daripada ${totalSelectedSlots} e-RPH yang dipaparkan (Jadual Waktu: Slot ${config.slotNumber})`}
+                        >
+                          SLOT {currentSlotNumber} / {totalSelectedSlots}
                         </span>
                         <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-900 text-cyan-300 border border-cyan-500/40 font-tech">
                           {config.periodLabel}
