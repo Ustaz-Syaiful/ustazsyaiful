@@ -283,6 +283,41 @@ export function getDateForDayIndex(startDateString: string, dayIndex: number): s
   }
 }
 
+export function addDaysToDate(dateString: string, days: number): string {
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    d.setDate(d.getDate() + days);
+    return d.toISOString().split('T')[0];
+  } catch {
+    return dateString;
+  }
+}
+
+export function getSundayOfWeek(dateString: string): string {
+  try {
+    const d = new Date(dateString);
+    if (isNaN(d.getTime())) return dateString;
+    const day = d.getDay(); // 0 is Sunday, 1 is Monday...
+    d.setDate(d.getDate() - day);
+    return d.toISOString().split('T')[0];
+  } catch {
+    return dateString;
+  }
+}
+
+export function getSundayForWeek(week: number, baseSundayStr: string = '2026-01-18', baseWeek: number = 30): string {
+  try {
+    const base = new Date(baseSundayStr);
+    if (isNaN(base.getTime())) return '2026-01-18';
+    const diffWeeks = week - baseWeek;
+    base.setDate(base.getDate() + diffWeeks * 7);
+    return base.toISOString().split('T')[0];
+  } catch {
+    return '2026-01-18';
+  }
+}
+
 /**
  * Finds appropriate RPT item for a given slot configuration and week.
  */

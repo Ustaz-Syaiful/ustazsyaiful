@@ -394,7 +394,7 @@ export const KurikulumView: React.FC<KurikulumViewProps> = ({
   return (
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Kurikulum Top Banner */}
-      <div className="bg-gradient-to-r from-slate-950 via-[#041926] to-slate-950 rounded-2xl p-6 text-white border border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col md:flex-row md:items-center justify-between gap-4 hud-bracket relative overflow-hidden">
+      <div className="bg-gradient-to-r from-slate-950 via-[#041926] to-slate-950 rounded-2xl p-6 text-white border border-cyan-500/40 shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col md:flex-row md:items-center justify-between gap-4 hud-bracket relative overflow-hidden print:hidden">
         <div className="relative z-10">
           <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-cyan-950/80 text-cyan-300 text-xs font-semibold mb-2 border border-cyan-500/30 font-tech">
             <BookOpen className="w-3.5 h-3.5 text-cyan-400" />
@@ -427,7 +427,7 @@ export const KurikulumView: React.FC<KurikulumViewProps> = ({
       </div>
 
       {/* Sub-Tabs Navigator */}
-      <div className="flex items-center space-x-2 bg-slate-950/80 p-2 rounded-2xl border border-cyan-500/30 shadow-md overflow-x-auto font-tech">
+      <div className="flex items-center space-x-2 bg-slate-950/80 p-2 rounded-2xl border border-cyan-500/30 shadow-md overflow-x-auto font-tech print:hidden">
         {[
           { id: 'jadual', label: 'JADUAL WAKTU', icon: CalendarDays, count: 28 },
           { id: 'rph', label: '15 e-RPH MINGGUAN', icon: FileText, count: 15 },
@@ -475,7 +475,7 @@ export const KurikulumView: React.FC<KurikulumViewProps> = ({
       {activeSubTab === 'rph' && (
         <div className="space-y-4">
           {/* Sub-Nav Mode Bar */}
-          <div className="bg-slate-950/90 p-3 rounded-2xl border border-cyan-500/30 flex flex-wrap items-center justify-between gap-3 font-tech shadow-md">
+          <div className="bg-slate-950/90 p-3 rounded-2xl border border-cyan-500/30 flex flex-wrap items-center justify-between gap-3 font-tech shadow-md print:hidden">
             <div className="flex items-center space-x-2">
               <button
                 type="button"

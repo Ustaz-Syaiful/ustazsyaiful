@@ -765,36 +765,40 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col font-sans-custom bg-[#02080d] bg-islamic-matrix text-slate-100 selection:bg-cyan-500 selection:text-slate-950 transition-colors duration-300">
       {/* Admin Top Notification & Toolbar Bar */}
-      <AdminBar
-        isAdmin={isAdmin}
-        onToggleAdmin={() => setIsAdmin(!isAdmin)}
-        onOpenMenuEditor={() => setIsMenuEditorOpen(true)}
-        onResetAllData={handleResetAllData}
-        onExportData={handleExportData}
-        onImportData={handleImportData}
-        onOpenFirebaseModal={() => setIsFirebaseModalOpen(true)}
-        notification={notification}
-      />
+      <div className="print:hidden">
+        <AdminBar
+          isAdmin={isAdmin}
+          onToggleAdmin={() => setIsAdmin(!isAdmin)}
+          onOpenMenuEditor={() => setIsMenuEditorOpen(true)}
+          onResetAllData={handleResetAllData}
+          onExportData={handleExportData}
+          onImportData={handleImportData}
+          onOpenFirebaseModal={() => setIsFirebaseModalOpen(true)}
+          notification={notification}
+        />
+      </div>
 
       {/* Top Main Navigation */}
-      <Navbar
-        activeMenu={activeMenu}
-        setActiveMenu={setActiveMenu}
-        menuItems={menuItems}
-        isAdmin={isAdmin}
-        onToggleAdmin={() => setIsAdmin(!isAdmin)}
-        onOpenMenuEditor={() => setIsMenuEditorOpen(true)}
-        onOpenFirebaseModal={() => setIsFirebaseModalOpen(true)}
-        prayerData={prayerData}
-        allZones={malaysiaZonesPrayerData}
-        selectedZone={selectedZone}
-        onSelectZone={setSelectedZone}
-        onOpenPrayerModal={() => setIsPrayerModalOpen(true)}
-        onOpenQuickRph={() => handleOpenRphModal(null)}
-      />
+      <div className="print:hidden">
+        <Navbar
+          activeMenu={activeMenu}
+          setActiveMenu={setActiveMenu}
+          menuItems={menuItems}
+          isAdmin={isAdmin}
+          onToggleAdmin={() => setIsAdmin(!isAdmin)}
+          onOpenMenuEditor={() => setIsMenuEditorOpen(true)}
+          onOpenFirebaseModal={() => setIsFirebaseModalOpen(true)}
+          prayerData={prayerData}
+          allZones={malaysiaZonesPrayerData}
+          selectedZone={selectedZone}
+          onSelectZone={setSelectedZone}
+          onOpenPrayerModal={() => setIsPrayerModalOpen(true)}
+          onOpenQuickRph={() => handleOpenRphModal(null)}
+        />
+      </div>
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 print:p-0 print:m-0 print:max-w-full">
         {activeMenu === 'utama' && (
           <UtamaView
             teacher={teacher}
@@ -902,7 +906,9 @@ export default function App() {
       </main>
 
       {/* Footer */}
-      <Footer setActiveMenu={setActiveMenu} />
+      <div className="print:hidden">
+        <Footer setActiveMenu={setActiveMenu} />
+      </div>
 
       {/* Menu Editor Modal for Admin */}
       <MenuEditorModal

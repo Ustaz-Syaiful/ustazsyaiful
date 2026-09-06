@@ -26,7 +26,10 @@ import {
   WEEKLY_15_SLOTS,
   WeeklySlotConfig,
   generateWeekly15Rph,
-  getDateForDayIndex
+  getDateForDayIndex,
+  addDaysToDate,
+  getSundayOfWeek,
+  getSundayForWeek
 } from '../utils/weeklyRphGenerator';
 import { exportWeeklyRphToPdf, PdfExportProgress } from '../utils/pdfExportHelper';
 import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
@@ -42,28 +45,36 @@ interface WeeklyRphStackViewProps {
 
 export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
   initialWeek = 33,
-  initialStartDate = '2026-01-18',
+  initialStartDate,
   allRphList = [],
   onSaveRph,
   onOpenDetailedModal
 }) => {
   const [selectedWeek, setSelectedWeek] = useState<number>(initialWeek);
-  const [startDate, setStartDate] = useState<string>(initialStartDate);
+
+  // Default: 5 days starting from Sunday to Thursday
+  const defaultSunday = initialStartDate || getSundayForWeek(initialWeek);
+  const [startDate, setStartDate] = useState<string>(defaultSunday);
+  const [endDate, setEndDate] = useState<string>(() => addDaysToDate(defaultSunday, 4));
+
   const [activeScript, setActiveScript] = useState<ScriptType>('rumi');
   const [isFitToScreen, setIsFitToScreen] = useState<boolean>(false);
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const [pdfProgress, setPdfProgress] = useState<PdfExportProgress | null>(null);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
 
+  // Anchor Sunday corresponding to the current startDate
+  const anchorSunday = useMemo(() => getSundayOfWeek(startDate), [startDate]);
+
   // 15 e-RPH items in local state for seamless inline editing
   const [weeklyRphs, setWeeklyRphs] = useState<RPHItem[]>(() => {
-    return generateWeekly15Rph(initialWeek, initialStartDate, activeScript, allRphList);
+    return generateWeekly15Rph(initialWeek, defaultSunday, activeScript, allRphList);
   });
 
-  // Re-generate or sync when week or start date changes
+  // Re-generate or sync when week or anchor Sunday changes
   useEffect(() => {
-    setWeeklyRphs(generateWeekly15Rph(selectedWeek, startDate, activeScript, allRphList));
-  }, [selectedWeek, startDate]);
+    setWeeklyRphs(generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList));
+  }, [selectedWeek, anchorSunday, activeScript]);
 
   // Handle ESC key to exit Fit to Screen mode
   useEffect(() => {
@@ -78,9 +89,62 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
   const isJawi = activeScript === 'jawi';
 
-  // Group the 15 slots by day for structured presentation
-  const groupedByDay = useMemo(() => {
-    const days: Array<{
+  // Handle week change: updates Sunday and Thursday (5 days default)
+  const handleWeekChange = (newWeek: number) => {
+    setSelectedWeek(newWeek);
+    const sun = getSundayForWeek(newWeek);
+    setStartDate(sun);
+    setEndDate(addDaysToDate(sun, 4)); // Default 5 days Ahad - Khamis
+  };
+
+  // Handle start date picker change
+  const handleStartDateChange = (newStart: string) => {
+    setStartDate(newStart);
+    if (endDate < newStart) {
+      setEndDate(addDaysToDate(newStart, 4));
+    }
+  };
+
+  // Handle end date picker change
+  const handleEndDateChange = (newEnd: string) => {
+    setEndDate(newEnd);
+    if (newEnd < startDate) {
+      setStartDate(newEnd);
+    }
+  };
+
+  // Quick Presets
+  const handleSetPreset = (type: '5days' | 'ahad' | 'isnin' | 'selasa' | 'rabu' | 'khamis') => {
+    const sun = getSundayOfWeek(startDate);
+    if (type === '5days') {
+      setStartDate(sun);
+      setEndDate(addDaysToDate(sun, 4));
+    } else if (type === 'ahad') {
+      const d = getDateForDayIndex(sun, 0);
+      setStartDate(d);
+      setEndDate(d);
+    } else if (type === 'isnin') {
+      const d = getDateForDayIndex(sun, 1);
+      setStartDate(d);
+      setEndDate(d);
+    } else if (type === 'selasa') {
+      const d = getDateForDayIndex(sun, 2);
+      setStartDate(d);
+      setEndDate(d);
+    } else if (type === 'rabu') {
+      const d = getDateForDayIndex(sun, 3);
+      setStartDate(d);
+      setEndDate(d);
+    } else if (type === 'khamis') {
+      const d = getDateForDayIndex(sun, 4);
+      setStartDate(d);
+      setEndDate(d);
+    }
+  };
+
+  // Group slots by day based on the selected date range
+  const { groupedByDay, totalSelectedSlots, totalSelectedDays } = useMemo(() => {
+    const baseDays: Array<{
       day: 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
       dayJawi: string;
       dayIndex: number;
@@ -91,49 +155,70 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         day: 'AHAD',
         dayJawi: 'احد',
         dayIndex: 0,
-        date: getDateForDayIndex(startDate, 0),
+        date: getDateForDayIndex(anchorSunday, 0),
         slots: []
       },
       {
         day: 'ISNIN',
         dayJawi: 'اثنين',
         dayIndex: 1,
-        date: getDateForDayIndex(startDate, 1),
+        date: getDateForDayIndex(anchorSunday, 1),
         slots: []
       },
       {
         day: 'SELASA',
         dayJawi: 'ثلاثاء',
         dayIndex: 2,
-        date: getDateForDayIndex(startDate, 2),
+        date: getDateForDayIndex(anchorSunday, 2),
         slots: []
       },
       {
         day: 'RABU',
         dayJawi: 'رابو',
         dayIndex: 3,
-        date: getDateForDayIndex(startDate, 3),
+        date: getDateForDayIndex(anchorSunday, 3),
         slots: []
       },
       {
         day: 'KHAMIS',
         dayJawi: 'خميس',
         dayIndex: 4,
-        date: getDateForDayIndex(startDate, 4),
+        date: getDateForDayIndex(anchorSunday, 4),
         slots: []
       }
     ];
 
     WEEKLY_15_SLOTS.forEach((config) => {
-      const rph = weeklyRphs[config.slotNumber - 1] || generateWeekly15Rph(selectedWeek, startDate, activeScript, allRphList)[config.slotNumber - 1];
-      const targetDay = days.find((d) => d.day === config.day);
-      if (targetDay && rph) {
-        targetDay.slots.push({ config, rph });
+      const rph =
+        weeklyRphs[config.slotNumber - 1] ||
+        generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList)[config.slotNumber - 1];
+      const slotDate = getDateForDayIndex(anchorSunday, config.dayIndex);
+
+      // Include slot if its date is within [startDate, endDate]
+      if (slotDate >= startDate && slotDate <= endDate) {
+        const targetDay = baseDays.find((d) => d.day === config.day);
+        if (targetDay && rph) {
+          targetDay.slots.push({
+            config,
+            rph: {
+              ...rph,
+              date: slotDate
+            }
+          });
+        }
       }
     });
 
-    return days;
-  }, [weeklyRphs, startDate, selectedWeek, activeScript, allRphList]);
+    // Only return days that contain at least one slot in range
+    const activeDays = baseDays.filter((d) => d.slots.length > 0);
+    const totalSlots = activeDays.reduce((acc, d) => acc + d.slots.length, 0);
+
+    return {
+      groupedByDay: activeDays,
+      totalSelectedSlots: totalSlots,
+      totalSelectedDays: activeDays.length
+    };
+  }, [weeklyRphs, startDate, endDate, selectedWeek, anchorSunday, activeScript, allRphList]);
 
   // Update a single slot in local state
   const handleUpdateSlot = (slotIndex: number, updatedFields: Partial<RPHItem>) => {
@@ -157,22 +242,33 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     }
   };
 
-  // Save all 15 e-RPH items to persistence
+  // Save selected e-RPH items to persistence
   const handleSaveAll = () => {
-    weeklyRphs.forEach((item, idx) => {
+    const slotsToSave: RPHItem[] = [];
+    groupedByDay.forEach((dayGroup) => {
+      dayGroup.slots.forEach(({ rph }) => {
+        slotsToSave.push(rph);
+      });
+    });
+
+    slotsToSave.forEach((item, idx) => {
       onSaveRph(item, idx !== 0);
     });
-    setSaveSuccessMsg('Semua 15 e-RPH berjaya disimpan!');
+    setSaveSuccessMsg(`${slotsToSave.length} e-RPH berjaya disimpan!`);
     setTimeout(() => setSaveSuccessMsg(null), 3500);
   };
 
   // Reset to fresh RPT values
   const handleResetToRpt = () => {
-    if (confirm(`Jana semula 15 e-RPH Minggu ${selectedWeek} berdasarkan RPT & Jadual Waktu rasmi? Sebarang suntingan deraf akan disetkan semula.`)) {
-      const fresh = generateWeekly15Rph(selectedWeek, startDate, activeScript, []);
+    if (
+      confirm(
+        `Jana semula e-RPH Minggu ${selectedWeek} berdasarkan RPT & Jadual Waktu rasmi? Sebarang suntingan deraf akan disetkan semula.`
+      )
+    ) {
+      const fresh = generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, []);
       setWeeklyRphs(fresh);
       fresh.forEach((item, idx) => onSaveRph(item, idx !== 0));
-      setSaveSuccessMsg('15 e-RPH telah dijana semula mengikut RPT!');
+      setSaveSuccessMsg('e-RPH telah dijana semula mengikut RPT!');
       setTimeout(() => setSaveSuccessMsg(null), 3000);
     }
   };
@@ -184,11 +280,20 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
   // Handle direct PDF download
   const handleDownloadPdf = async () => {
+    if (totalSelectedSlots === 0) {
+      alert('Tiada slot e-RPH untuk dimuat turun pada julat tarikh ini.');
+      return;
+    }
+
     setIsExportingPdf(true);
-    setPdfProgress({ current: 0, total: 15, status: 'Memulakan penjanaan fail PDF 15 e-RPH...' });
+    setPdfProgress({
+      current: 0,
+      total: totalSelectedSlots,
+      status: `Memulakan penjanaan fail PDF (${totalSelectedSlots} e-RPH)...`
+    });
 
     try {
-      const filename = `e-RPH_Minggu_${selectedWeek}_Jadual_SK_Merbau_Pulas.pdf`;
+      const filename = `e-RPH_Minggu_${selectedWeek}_(${startDate}_hingga_${endDate})_${totalSelectedSlots}_Slot.pdf`;
       await exportWeeklyRphToPdf('weekly-rph-print-container', filename, (p) => {
         setPdfProgress(p);
       });
@@ -223,12 +328,12 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-tech uppercase">
                   SK MERBAU PULAS (KBA 5012)
                 </span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500/40 font-tech">
-                  15 e-RPH SEMINGGU
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 font-tech">
+                  {totalSelectedSlots} e-RPH DIPILIH ({totalSelectedDays} HARI)
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-white font-tech tracking-wide mt-0.5">
-                e-RPH MINGGUAN MENGIKUT JADUAL WAKTU & RPT
+                e-RPH MENGIKUT JULAT TARIKH & JADUAL WAKTU
               </h2>
             </div>
           </div>
@@ -239,7 +344,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
             <div className="flex items-center space-x-1 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-cyan-500/30">
               <button
                 type="button"
-                onClick={() => setSelectedWeek((w) => Math.max(1, w - 1))}
+                onClick={() => handleWeekChange(Math.max(1, selectedWeek - 1))}
                 disabled={selectedWeek <= 1}
                 className="p-1 text-slate-400 hover:text-cyan-300 disabled:opacity-30 rounded"
                 title="Minggu Sebelumnya"
@@ -251,7 +356,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                 <span className="text-xs text-slate-400 font-semibold uppercase">MINGGU:</span>
                 <select
                   value={selectedWeek}
-                  onChange={(e) => setSelectedWeek(Number(e.target.value))}
+                  onChange={(e) => handleWeekChange(Number(e.target.value))}
                   className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-1 text-xs font-bold text-cyan-300 focus:outline-none"
                 >
                   {Array.from({ length: 42 }, (_, i) => i + 1).map((w) => (
@@ -264,7 +369,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
               <button
                 type="button"
-                onClick={() => setSelectedWeek((w) => Math.min(42, w + 1))}
+                onClick={() => handleWeekChange(Math.min(42, selectedWeek + 1))}
                 disabled={selectedWeek >= 42}
                 className="p-1 text-slate-400 hover:text-cyan-300 disabled:opacity-30 rounded"
                 title="Minggu Seterusnya"
@@ -273,16 +378,86 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               </button>
             </div>
 
-            {/* Sunday Start Date Input */}
-            <div className="flex items-center space-x-1.5 bg-slate-900 px-2.5 py-1.5 rounded-xl border border-cyan-500/30">
-              <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-              <span className="text-[11px] text-slate-400 font-semibold uppercase">Tarikh Ahad:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-0.5 text-xs font-mono text-cyan-200 focus:outline-none"
-              />
+            {/* Date Range Selector: Dari Tarikh & Hingga Tarikh */}
+            <div className="flex flex-wrap items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-cyan-500/40">
+              <div className="flex items-center space-x-1.5">
+                <Calendar className="w-3.5 h-3.5 text-cyan-400" />
+                <span className="text-[11px] text-cyan-300 font-bold uppercase">DARI:</span>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => handleStartDateChange(e.target.value)}
+                  className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-1 text-xs font-mono text-cyan-200 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                  title="Pilih Tarikh Mula (Default Hari Ahad)"
+                />
+              </div>
+
+              <div className="flex items-center space-x-1.5">
+                <span className="text-[11px] text-cyan-300 font-bold uppercase">HINGGA:</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => handleEndDateChange(e.target.value)}
+                  className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-1 text-xs font-mono text-cyan-200 focus:outline-none focus:ring-1 focus:ring-cyan-400"
+                  title="Pilih Tarikh Akhir (Default Hari Khamis)"
+                />
+              </div>
+            </div>
+
+            {/* Quick Presets: 5 Hari (Ahad-Khamis), Ahad, Isnin, Selasa, Rabu, Khamis */}
+            <div className="flex items-center space-x-1 bg-slate-900/70 p-1 rounded-xl border border-cyan-500/25 text-[10px] font-tech">
+              <button
+                type="button"
+                onClick={() => handleSetPreset('5days')}
+                className={`px-2 py-1 rounded-lg font-bold transition ${
+                  totalSelectedDays === 5
+                    ? 'bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 shadow'
+                    : 'text-slate-300 hover:text-cyan-300 hover:bg-slate-800'
+                }`}
+                title="Pilih 5 Hari Penuh Persekolahan (Ahad hingga Khamis)"
+              >
+                5 HARI (AHAD-KHAMIS)
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPreset('ahad')}
+                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
+                title="Pilih Hari Ahad sahaja (4 slot)"
+              >
+                AHAD
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPreset('isnin')}
+                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
+                title="Pilih Hari Isnin sahaja (3 slot)"
+              >
+                ISNIN
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPreset('selasa')}
+                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
+                title="Pilih Hari Selasa sahaja (4 slot)"
+              >
+                SELASA
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPreset('rabu')}
+                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
+                title="Pilih Hari Rabu sahaja (2 slot)"
+              >
+                RABU
+              </button>
+              <button
+                type="button"
+                onClick={() => handleSetPreset('khamis')}
+                className="px-1.5 py-1 rounded-lg text-slate-400 hover:text-cyan-300 hover:bg-slate-800"
+                title="Pilih Hari Khamis sahaja (2 slot)"
+              >
+                KHAMIS
+              </button>
             </div>
 
             {/* Tulisan Toggle (Rumi / Jawi) */}
@@ -330,33 +505,35 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
             <button
               type="button"
               onClick={handleDownloadPdf}
-              disabled={isExportingPdf}
+              disabled={isExportingPdf || totalSelectedSlots === 0}
               className="px-3.5 py-1.5 bg-gradient-to-r from-rose-500 via-red-500 to-amber-500 hover:from-rose-400 hover:to-amber-400 text-white font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-rose-900/30 disabled:opacity-50"
-              title="Muat Turun 15 e-RPH dalam format dokumen PDF rasmi A4"
+              title={`Muat Turun ${totalSelectedSlots} e-RPH dalam format dokumen PDF rasmi A4`}
             >
               <FileDown className="w-4 h-4" />
-              <span>{isExportingPdf ? 'MENJANA PDF...' : 'MUAT TURUN (FORMAT PDF)'}</span>
+              <span>{isExportingPdf ? 'MENJANA PDF...' : `MUAT TURUN ${totalSelectedSlots} e-RPH (PDF)`}</span>
             </button>
 
             {/* Cetak (Print) */}
             <button
               type="button"
               onClick={handlePrint}
-              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/40 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow"
-              title="Cetak 15 e-RPH Mingguan"
+              disabled={totalSelectedSlots === 0}
+              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/40 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow disabled:opacity-50"
+              title={`Cetak ${totalSelectedSlots} e-RPH (Format 1 e-RPH 1 Halaman)`}
             >
               <Printer className="w-3.5 h-3.5 text-cyan-400" />
-              <span>CETAK</span>
+              <span>CETAK ({totalSelectedSlots} e-RPH)</span>
             </button>
 
             {/* Simpan Semua */}
             <button
               type="button"
               onClick={handleSaveAll}
-              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow"
+              disabled={totalSelectedSlots === 0}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-cyan-400 to-emerald-400 hover:from-cyan-300 hover:to-emerald-300 text-slate-950 font-bold text-xs rounded-xl transition flex items-center space-x-1.5 shadow disabled:opacity-50"
             >
               <Save className="w-3.5 h-3.5" />
-              <span>SIMPAN SEMUA</span>
+              <span>SIMPAN ({totalSelectedSlots} e-RPH)</span>
             </button>
 
             {/* Reset ke RPT */}
@@ -393,43 +570,60 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         )}
       </div>
 
-      {/* ================= SUSUNAN 15 e-RPH KE BAWAH (SCROLLABLE VERTICAL STACK) ================= */}
+      {/* ================= SUSUNAN e-RPH MENGIKUT JULAT TARIKH ================= */}
       <div
         id="weekly-rph-print-container"
         className="w-full max-w-6xl mx-auto space-y-8 pb-16"
       >
-        {groupedByDay.map((dayGroup) => (
-          <div key={dayGroup.day} className="space-y-4">
-            {/* Day Header Divider */}
-            <div className="bg-slate-950/90 border-l-4 border-cyan-400 border-y border-r border-cyan-500/30 p-3 sm:p-4 rounded-xl shadow-md flex flex-wrap items-center justify-between gap-2 font-tech">
-              <div className="flex items-center space-x-3">
-                <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
-                <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
-                  HARI {dayGroup.day} ({isJawi ? dayGroup.dayJawi : dayGroup.day}) • {dayGroup.date}
-                </h3>
+        {groupedByDay.length === 0 ? (
+          <div className="p-8 text-center bg-slate-900/50 rounded-2xl border border-cyan-500/30 space-y-2 font-tech">
+            <p className="text-sm text-cyan-300">
+              Tiada slot e-RPH pada julat tarikh yang dipilih ({startDate} hingga {endDate}).
+            </p>
+            <p className="text-xs text-slate-400">
+              Sila pilih julat tarikh dalam hari persekolahan (Ahad hingga Khamis).
+            </p>
+            <button
+              type="button"
+              onClick={() => handleSetPreset('5days')}
+              className="mt-2 px-4 py-2 bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 rounded-xl text-xs font-bold hover:bg-cyan-500/30 transition"
+            >
+              Set Semula ke 5 Hari Penuh (Ahad - Khamis)
+            </button>
+          </div>
+        ) : (
+          groupedByDay.map((dayGroup) => (
+            <div key={dayGroup.day} className="space-y-4">
+              {/* Day Header Divider - Hidden in print to avoid taking an extra page */}
+              <div className="bg-slate-950/90 border-l-4 border-cyan-400 border-y border-r border-cyan-500/30 p-3 sm:p-4 rounded-xl shadow-md flex flex-wrap items-center justify-between gap-2 font-tech print:hidden">
+                <div className="flex items-center space-x-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-pulse" />
+                  <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
+                    HARI {dayGroup.day} ({isJawi ? dayGroup.dayJawi : dayGroup.day}) • {dayGroup.date}
+                  </h3>
+                </div>
+                <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-bold">
+                  {dayGroup.slots.length} e-RPH
+                </span>
               </div>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-cyan-950 text-cyan-300 border border-cyan-500/40 font-bold">
-                {dayGroup.slots.length} e-RPH
-              </span>
-            </div>
 
-            {/* Individual e-RPH Cards stacked downwards */}
-            <div className="space-y-6">
-              {dayGroup.slots.map(({ config, rph }) => {
-                const slotIndex = config.slotNumber - 1;
-                const isTasmik = config.isTasmik || isTasmikRph(rph);
-                const displayItem = isJawi ? getJawiRph(rph) : rph;
+              {/* Individual e-RPH Cards - Strictly 1 e-RPH 1 Page */}
+              <div className="space-y-6">
+                {dayGroup.slots.map(({ config, rph }) => {
+                  const slotIndex = config.slotNumber - 1;
+                  const isTasmik = config.isTasmik || isTasmikRph(rph);
+                  const displayItem = isJawi ? getJawiRph(rph) : rph;
 
-                // Tasmik standard data
-                const tasmikData = isJawi ? TASMIK_OFFICIAL_DATA.jawi : TASMIK_OFFICIAL_DATA.rumi;
+                  // Tasmik standard data
+                  const tasmikData = isJawi ? TASMIK_OFFICIAL_DATA.jawi : TASMIK_OFFICIAL_DATA.rumi;
 
-                return (
-                  <div
-                    key={rph.id || `slot-${config.slotNumber}`}
-                    data-printable-card="true"
-                    className="bg-slate-950/95 rounded-2xl border border-cyan-500/30 p-5 sm:p-6 shadow-xl space-y-4 hover:border-cyan-400/60 transition hud-bracket text-slate-200 break-inside-avoid print:bg-white print:text-black print:border-black print:shadow-none print:m-0 print:p-6 print:rounded-none"
-                    style={{ pageBreakAfter: 'always' }}
-                  >
+                  return (
+                    <div
+                      key={rph.id || `slot-${config.slotNumber}`}
+                      data-printable-card="true"
+                      className="printable-rph-card bg-slate-950/95 rounded-2xl border border-cyan-500/30 p-5 sm:p-6 shadow-xl space-y-4 hover:border-cyan-400/60 transition hud-bracket text-slate-200 break-inside-avoid print:bg-white print:text-black print:border-black print:shadow-none print:m-0 print:p-6 print:rounded-none"
+                      style={{ pageBreakAfter: 'always', breakAfter: 'page', pageBreakInside: 'avoid', breakInside: 'avoid' }}
+                    >
                     {/* Header: Slot Badge, Day, Date, Time, Class, Subject */}
                     <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-500/25 pb-3.5 print:border-black">
                       <div className="flex items-center space-x-2">
@@ -666,7 +860,8 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               })}
             </div>
           </div>
-        ))}
+        ))
+      )}
       </div>
     </div>
   );
