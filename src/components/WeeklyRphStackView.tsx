@@ -34,6 +34,7 @@ import {
 import { exportWeeklyRphToPdf, PdfExportProgress } from '../utils/pdfExportHelper';
 import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
 import { getJawiRph } from '../utils/jawiConverter';
+import { DatePickerField } from './DatePickerField';
 
 interface WeeklyRphStackViewProps {
   initialWeek?: number;
@@ -378,30 +379,24 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               </button>
             </div>
 
-            {/* Date Range Selector: Dari Tarikh & Hingga Tarikh */}
+            {/* Date Range Selector: Dari Tarikh & Hingga Tarikh with Interactive DatePicker */}
             <div className="flex flex-wrap items-center gap-2 bg-slate-900/90 px-3 py-1.5 rounded-xl border border-cyan-500/40">
-              <div className="flex items-center space-x-1.5">
-                <Calendar className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="text-[11px] text-cyan-300 font-bold uppercase">DARI:</span>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => handleStartDateChange(e.target.value)}
-                  className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-1 text-xs font-mono text-cyan-200 focus:outline-none focus:ring-1 focus:ring-cyan-400"
-                  title="Pilih Tarikh Mula (Default Hari Ahad)"
-                />
-              </div>
-
-              <div className="flex items-center space-x-1.5">
-                <span className="text-[11px] text-cyan-300 font-bold uppercase">HINGGA:</span>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => handleEndDateChange(e.target.value)}
-                  className="bg-slate-950 border border-cyan-500/40 rounded-lg px-2 py-1 text-xs font-mono text-cyan-200 focus:outline-none focus:ring-1 focus:ring-cyan-400"
-                  title="Pilih Tarikh Akhir (Default Hari Khamis)"
-                />
-              </div>
+              <Calendar className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+              <DatePickerField
+                id="start-date-picker"
+                label="DARI"
+                value={startDate}
+                onChange={handleStartDateChange}
+                title="Pilih Tarikh Mula (Buka Kalendar)"
+              />
+              <span className="text-cyan-500/60 font-bold hidden sm:inline">→</span>
+              <DatePickerField
+                id="end-date-picker"
+                label="HINGGA"
+                value={endDate}
+                onChange={handleEndDateChange}
+                title="Pilih Tarikh Akhir (Buka Kalendar)"
+              />
             </div>
 
             {/* Quick Presets: 5 Hari (Ahad-Khamis), Ahad, Isnin, Selasa, Rabu, Khamis */}
@@ -804,7 +799,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                             type="button"
                             onClick={() =>
                               handleUpdateSlot(slotIndex, {
-                                reflection: `${config.defaultTotalStudents - 2}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.\n2/${config.defaultTotalStudents} orang murid diberi bimbingan pemulihan berterusan.`
+                                reflection: `Kehadiran: ${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.`
                               })
                             }
                             className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40"
@@ -852,7 +847,6 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                       {/* Footer: Disemak oleh Guru Besar / PK */}
                       <div className="pt-2 border-t border-cyan-500/20 flex flex-wrap items-center justify-between text-[11px] text-slate-400 print:text-black">
                         <span>Disemak Oleh: Guru Besar @ Penolong Kanan (SK Merbau Pulas)</span>
-                        <span className="font-mono">Tarikh Cetakan / Eksport: {new Date().toLocaleDateString('ms-MY')}</span>
                       </div>
                     </div>
                   </div>

@@ -22,6 +22,28 @@ export interface WeeklySlotConfig {
   defaultTotalStudents: number;
 }
 
+export const CLASS_DEFAULT_ATTENDANCE: Record<string, { total: number; ratio: string }> = {
+  '1 IBNU SINA': { total: 29, ratio: '29/29' },
+  '2 IBNU SINA': { total: 26, ratio: '26/26' },
+  '3 IBNU SINA': { total: 33, ratio: '33/33' },
+  '4 IBNU SINA': { total: 29, ratio: '29/29' },
+  '6 IBNU SINA': { total: 27, ratio: '27/27' },
+  '6 IBNU KHALDUN': { total: 25, ratio: '25/25' },
+  '1 IBNU KHALDUN': { total: 29, ratio: '29/29' }
+};
+
+export function getClassAttendance(className: string): { total: number; ratio: string } {
+  const norm = className.toUpperCase();
+  if (norm.includes('1 IBNU SINA') || norm.includes('1 IS')) return { total: 29, ratio: '29/29' };
+  if (norm.includes('2 IBNU SINA') || norm.includes('2 IS')) return { total: 26, ratio: '26/26' };
+  if (norm.includes('3 IBNU SINA') || norm.includes('3 IS')) return { total: 33, ratio: '33/33' };
+  if (norm.includes('4 IBNU SINA') || norm.includes('4 IS')) return { total: 29, ratio: '29/29' };
+  if (norm.includes('6 IBNU SINA') || norm.includes('6 IS')) return { total: 27, ratio: '27/27' };
+  if (norm.includes('6 IBNU KHALDUN') || norm.includes('6 IK')) return { total: 25, ratio: '25/25' };
+  if (norm.includes('1 IBNU KHALDUN') || norm.includes('1 IK')) return { total: 29, ratio: '29/29' };
+  return { total: 30, ratio: '30/30' };
+}
+
 /**
  * The 15 official weekly teaching slots from Jadual Waktu SK Merbau Pulas (KBA 5012)
  * Ordered chronologically by Day (Ahad to Khamis) and Start Time
@@ -41,7 +63,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 26
   },
   {
     slotNumber: 2,
@@ -56,7 +78,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Tasmik Al-Quran j-QAF',
     subjectCategoryRpt: 'Tadarus/Tasmik',
     isTasmik: true,
-    defaultTotalStudents: 32
+    defaultTotalStudents: 25
   },
   {
     slotNumber: 3,
@@ -71,7 +93,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Jawi)',
     subjectCategoryRpt: 'Jawi',
     isTasmik: false,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 27
   },
   {
     slotNumber: 4,
@@ -86,7 +108,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 27
   },
 
   // ================= ISNIN (3 SLOTS) =================
@@ -103,7 +125,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: "Pendidikan Islam (Ulum Syari'yyah)",
     subjectCategoryRpt: 'Akidah',
     isTasmik: false,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 27
   },
   {
     slotNumber: 6,
@@ -118,7 +140,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 27
   },
   {
     slotNumber: 7,
@@ -133,7 +155,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: "Pendidikan Islam (Ulum Syari'yyah)",
     subjectCategoryRpt: 'Ibadah',
     isTasmik: false,
-    defaultTotalStudents: 32
+    defaultTotalStudents: 25
   },
 
   // ================= SELASA (4 SLOTS) =================
@@ -150,7 +172,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Tasmik Al-Quran j-QAF',
     subjectCategoryRpt: 'Tadarus/Tasmik',
     isTasmik: true,
-    defaultTotalStudents: 31
+    defaultTotalStudents: 29
   },
   {
     slotNumber: 9,
@@ -165,7 +187,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Jawi)',
     subjectCategoryRpt: 'Jawi',
     isTasmik: false,
-    defaultTotalStudents: 32
+    defaultTotalStudents: 25
   },
   {
     slotNumber: 10,
@@ -180,7 +202,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 32
+    defaultTotalStudents: 25
   },
   {
     slotNumber: 11,
@@ -195,7 +217,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Tasmik Al-Quran j-QAF',
     subjectCategoryRpt: 'Tadarus/Tasmik',
     isTasmik: true,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 27
   },
 
   // ================= RABU (2 SLOTS) =================
@@ -212,7 +234,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 32
+    defaultTotalStudents: 25
   },
   {
     slotNumber: 13,
@@ -227,7 +249,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Tasmik Al-Quran j-QAF',
     subjectCategoryRpt: 'Tadarus/Tasmik',
     isTasmik: true,
-    defaultTotalStudents: 30
+    defaultTotalStudents: 26
   },
 
   // ================= KHAMIS (2 SLOTS) =================
@@ -238,13 +260,13 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     dayIndex: 4,
     time: '10:15 - 11:15 (60 Minit)',
     periodLabel: 'Waktu 6 - 7',
-    className: '1 IBNU KHALDUN (1 IK)',
+    className: '1 IBNU SINA (1 IS)',
     yearLevel: 'Tahun 1',
     category: 'AQ',
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 28
+    defaultTotalStudents: 29
   },
   {
     slotNumber: 15,
@@ -259,7 +281,7 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
     subjectDisplay: 'Pendidikan Islam (Al-Quran)',
     subjectCategoryRpt: 'Al-Quran',
     isTasmik: false,
-    defaultTotalStudents: 29
+    defaultTotalStudents: 33
   }
 ];
 
@@ -404,7 +426,7 @@ export function generateWeekly15Rph(
       };
     }
 
-    // 1. Tasmik Slot: use standardized official KPM Tasmik format
+    // 1. Tasmik Slot: use standardized official KPM Tasmik format with 100% default attendance
     if (config.isTasmik) {
       return createTasmikRph({
         id: existingId,
@@ -415,8 +437,8 @@ export function generateWeekly15Rph(
         className: config.className,
         preferredScript,
         totalStudents: config.defaultTotalStudents,
-        masteredCount: config.defaultTotalStudents - 2,
-        unmasteredCount: 2
+        masteredCount: config.defaultTotalStudents,
+        unmasteredCount: 0
       });
     }
 
@@ -454,7 +476,9 @@ export function generateWeekly15Rph(
     const teachingAids = ['Buku Teks Pendidikan Islam', 'Buku Aktiviti Murid', 'Papan Putih Mini / Carta Digital'];
     const emk = rpt?.emk || 'Nilai Murni (Kerjasama & Istiqamah)';
     const pbdAssessment = rpt?.assessment || 'Lisan & Bertulis';
-    const reflection = `${config.defaultTotalStudents - 2}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dengan jayanya.\n2/${config.defaultTotalStudents} orang murid diberi bimbingan pemulihan berterusan.`;
+    const totalCount = config.defaultTotalStudents;
+    const attRatio = `${totalCount}/${totalCount}`;
+    const reflection = `Kehadiran: ${attRatio} orang murid.\n${attRatio} orang murid dapat menguasai objektif pembelajaran dengan jayanya dan diberi latihan pengayaan.`;
 
     const rawRph: RPHItem = {
       id: existingId,
@@ -500,7 +524,7 @@ export function generateWeekly15Rph(
         teachingAids: jawiVersion.teachingAids,
         crossCurricularElements: jawiVersion.crossCurricularElements,
         pbdAssessment: jawiVersion.pbdAssessment,
-        reflection: jawiVersion.reflection
+        reflection: `كحاضيرن: ${attRatio} اورڠ موريد.\n${attRatio} اورڠ موريد دافت مڠواساءي اوبجيکتيف ڤمبلاجرن دڠن جاياڽ دان دبري لاتيهن ڤڠايأن.`
       }
     };
   });
