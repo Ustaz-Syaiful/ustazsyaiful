@@ -128,12 +128,163 @@
     justify-content: space-between !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    border-radius: 8px !important;
+    border-radius: 12px !important;
+    border-width: 2.5px !important;
+    border-style: solid !important;
   }
 
   .printable-rph-card:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
+  }
+
+  /* Force background colors on all printable elements */
+  .printable-rph-card *,
+  .printable-rph-card .rph-box,
+  .printable-rph-card [data-print-bg] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Cheerful Bidang Card & Box Print Styles */
+  /* 1. Al-Quran (Emerald) */
+  .printable-rph-card[data-bidang-id="Al-Quran"],
+  .printable-rph-card[data-bidang-id="Tasmik"] {
+    border-color: #059669 !important;
+  }
+  .printable-rph-card[data-bidang-id="Al-Quran"] .rph-box,
+  .printable-rph-card[data-bidang-id="Tasmik"] .rph-box {
+    background-color: #d1fae5 !important;
+    border-color: #059669 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Al-Quran"] .rph-box-header,
+  .printable-rph-card[data-bidang-id="Tasmik"] .rph-box-header {
+    color: #047857 !important;
+  }
+  .printable-rph-card[data-bidang-id="Al-Quran"] .rph-badge-pill,
+  .printable-rph-card[data-bidang-id="Tasmik"] .rph-badge-pill {
+    background-color: #059669 !important;
+    color: #ffffff !important;
+  }
+
+  /* 2. Hadis (Sky Blue) */
+  .printable-rph-card[data-bidang-id="Hadis"] {
+    border-color: #0284c7 !important;
+  }
+  .printable-rph-card[data-bidang-id="Hadis"] .rph-box {
+    background-color: #e0f2fe !important;
+    border-color: #0284c7 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Hadis"] .rph-box-header {
+    color: #0369a1 !important;
+  }
+  .printable-rph-card[data-bidang-id="Hadis"] .rph-badge-pill {
+    background-color: #0284c7 !important;
+    color: #ffffff !important;
+  }
+
+  /* 3. Akidah (Lavender Violet) */
+  .printable-rph-card[data-bidang-id="Akidah"] {
+    border-color: #7c3aed !important;
+  }
+  .printable-rph-card[data-bidang-id="Akidah"] .rph-box {
+    background-color: #ede9fe !important;
+    border-color: #7c3aed !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Akidah"] .rph-box-header {
+    color: #6d28d9 !important;
+  }
+  .printable-rph-card[data-bidang-id="Akidah"] .rph-badge-pill {
+    background-color: #7c3aed !important;
+    color: #ffffff !important;
+  }
+
+  /* 4. Ibadah (Royal Ocean Blue) */
+  .printable-rph-card[data-bidang-id="Ibadah"] {
+    border-color: #2563eb !important;
+  }
+  .printable-rph-card[data-bidang-id="Ibadah"] .rph-box {
+    background-color: #dbeafe !important;
+    border-color: #2563eb !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Ibadah"] .rph-box-header {
+    color: #1d4ed8 !important;
+  }
+  .printable-rph-card[data-bidang-id="Ibadah"] .rph-badge-pill {
+    background-color: #2563eb !important;
+    color: #ffffff !important;
+  }
+
+  /* 5. Sirah (Golden Sunny Amber) */
+  .printable-rph-card[data-bidang-id="Sirah"] {
+    border-color: #d97706 !important;
+  }
+  .printable-rph-card[data-bidang-id="Sirah"] .rph-box {
+    background-color: #fef3c7 !important;
+    border-color: #d97706 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Sirah"] .rph-box-header {
+    color: #b45309 !important;
+  }
+  .printable-rph-card[data-bidang-id="Sirah"] .rph-badge-pill {
+    background-color: #d97706 !important;
+    color: #ffffff !important;
+  }
+
+  /* 6. Adab (Rose Coral Blush) */
+  .printable-rph-card[data-bidang-id="Adab"] {
+    border-color: #e11d48 !important;
+  }
+  .printable-rph-card[data-bidang-id="Adab"] .rph-box {
+    background-color: #ffe4e6 !important;
+    border-color: #e11d48 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Adab"] .rph-box-header {
+    color: #be123c !important;
+  }
+  .printable-rph-card[data-bidang-id="Adab"] .rph-badge-pill {
+    background-color: #e11d48 !important;
+    color: #ffffff !important;
+  }
+
+  /* 7. Jawi (Vibrant Magenta Pink) */
+  .printable-rph-card[data-bidang-id="Jawi"] {
+    border-color: #db2777 !important;
+  }
+  .printable-rph-card[data-bidang-id="Jawi"] .rph-box {
+    background-color: #fce7f3 !important;
+    border-color: #db2777 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Jawi"] .rph-box-header {
+    color: #be185d !important;
+  }
+  .printable-rph-card[data-bidang-id="Jawi"] .rph-badge-pill {
+    background-color: #db2777 !important;
+    color: #ffffff !important;
+  }
+
+  /* 8. Bahasa Arab (Fresh Aqua Teal) */
+  .printable-rph-card[data-bidang-id="Bahasa Arab"] {
+    border-color: #0d9488 !important;
+  }
+  .printable-rph-card[data-bidang-id="Bahasa Arab"] .rph-box {
+    background-color: #ccfbf1 !important;
+    border-color: #0d9488 !important;
+    border-width: 2px !important;
+  }
+  .printable-rph-card[data-bidang-id="Bahasa Arab"] .rph-box-header {
+    color: #0f766e !important;
+  }
+  .printable-rph-card[data-bidang-id="Bahasa Arab"] .rph-badge-pill {
+    background-color: #0d9488 !important;
+    color: #ffffff !important;
   }
 
   .printable-rph-card p,

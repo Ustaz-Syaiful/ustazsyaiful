@@ -882,16 +882,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                       {/* Metadata Grid (Tarikh, Hari, Masa, Kelas, Bidang) */}
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-tech">
                         <div
-                          className="p-3.5 rounded-xl border transition"
+                          className="rph-box p-3.5 rounded-xl border-2 transition shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}15`,
-                            borderColor: `${theme.primaryHex}45`
+                            backgroundColor: `${theme.primaryHex}18`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -903,16 +903,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                         </div>
 
                         <div
-                          className="p-3.5 rounded-xl border transition"
+                          className="rph-box p-3.5 rounded-xl border-2 transition shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}15`,
-                            borderColor: `${theme.primaryHex}45`
+                            backgroundColor: `${theme.primaryHex}18`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -924,16 +924,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                         </div>
 
                         <div
-                          className="p-3.5 rounded-xl border transition"
+                          className="rph-box p-3.5 rounded-xl border-2 transition shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}15`,
-                            borderColor: `${theme.primaryHex}45`
+                            backgroundColor: `${theme.primaryHex}18`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -945,16 +945,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                         </div>
 
                         <div
-                          className="p-3.5 rounded-xl border transition"
+                          className="rph-box p-3.5 rounded-xl border-2 transition shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}15`,
-                            borderColor: `${theme.primaryHex}45`
+                            backgroundColor: `${theme.primaryHex}18`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -974,16 +974,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                       <div className={`space-y-3.5 ${isJawi ? 'text-right font-jawi leading-loose' : 'text-left font-sans-custom'}`} dir={isJawi ? 'rtl' : 'ltr'}>
                         {/* Tajuk Pelajaran */}
                         <div
-                          className="p-4 rounded-xl border"
+                          className="rph-box p-4 rounded-xl border-2 shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}12`,
-                            borderColor: `${theme.primaryHex}40`
+                            backgroundColor: `${theme.primaryHex}16`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-tech font-bold uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-tech font-black uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -996,17 +996,17 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
                         {/* SK & SP */}
                         <div
-                          className="grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border"
+                          className="rph-box grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border-2 shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}10`,
-                            borderColor: `${theme.primaryHex}40`
+                            backgroundColor: `${theme.primaryHex}14`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <div>
                             <span
-                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black font-tech uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1018,7 +1018,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
                           <div>
                             <span
-                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black font-tech uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1032,17 +1032,17 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
                         {/* Objectives & Success Criteria */}
                         <div
-                          className="grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border"
+                          className="rph-box grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border-2 shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}10`,
-                            borderColor: `${theme.primaryHex}40`
+                            backgroundColor: `${theme.primaryHex}14`,
+                            borderColor: theme.primaryHex
                           }}
                           data-print-bg={theme.bgLightHex}
-                          data-print-border={theme.borderHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <div>
                             <span
-                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black font-tech uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1056,7 +1056,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
                           <div>
                             <span
-                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black font-tech uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1072,16 +1072,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
                         {/* Activities */}
                         <div
-                          className="p-4 rounded-xl border space-y-3"
+                          className="rph-box p-4 rounded-xl border-2 space-y-3 shadow-sm"
                           style={{
-                            backgroundColor: `${theme.primaryHex}10`,
-                            borderColor: `${theme.primaryHex}40`
+                            backgroundColor: `${theme.primaryHex}14`,
+                            borderColor: theme.primaryHex
                           }}
-                          data-print-bg="#ffffff"
-                          data-print-border={theme.borderHex}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.primaryHex}
                         >
                           <span
-                            className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                            className="rph-box-header text-xs sm:text-sm font-black font-tech uppercase block mb-1 tracking-wide"
                             style={{ color: theme.primaryHex }}
                             data-print-color={theme.primaryHex}
                           >
@@ -1090,7 +1090,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           <div className={`space-y-2.5 text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose' : 'text-base sm:text-lg leading-relaxed'}`}>
                             <p>
                               <b
-                                className="font-tech"
+                                className="font-tech font-bold"
                                 style={{ color: theme.primaryHex }}
                                 data-print-color={theme.primaryHex}
                               >
@@ -1100,7 +1100,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                             </p>
                             <div>
                               <b
-                                className="font-tech"
+                                className="font-tech font-bold"
                                 style={{ color: theme.primaryHex }}
                                 data-print-color={theme.primaryHex}
                               >
@@ -1114,7 +1114,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                             </div>
                             <p>
                               <b
-                                className="font-tech"
+                                className="font-tech font-bold"
                                 style={{ color: theme.primaryHex }}
                                 data-print-color={theme.primaryHex}
                               >
@@ -1128,16 +1128,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                         {/* Pedagogical elements (BBM, EMK, Pentaksiran) */}
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-tech">
                           <div
-                            className="p-3.5 rounded-xl border"
+                            className="rph-box p-3.5 rounded-xl border-2 shadow-sm"
                             style={{
-                              backgroundColor: `${theme.primaryHex}15`,
-                              borderColor: `${theme.primaryHex}45`
+                              backgroundColor: `${theme.primaryHex}18`,
+                              borderColor: theme.primaryHex
                             }}
                             data-print-bg={theme.bgLightHex}
-                            data-print-border={theme.borderHex}
+                            data-print-border={theme.primaryHex}
                           >
                             <span
-                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1149,16 +1149,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
 
                           <div
-                            className="p-3.5 rounded-xl border"
+                            className="rph-box p-3.5 rounded-xl border-2 shadow-sm"
                             style={{
-                              backgroundColor: `${theme.primaryHex}15`,
-                              borderColor: `${theme.primaryHex}45`
+                              backgroundColor: `${theme.primaryHex}18`,
+                              borderColor: theme.primaryHex
                             }}
                             data-print-bg={theme.bgLightHex}
-                            data-print-border={theme.borderHex}
+                            data-print-border={theme.primaryHex}
                           >
                             <span
-                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1170,16 +1170,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
 
                           <div
-                            className="p-3.5 rounded-xl border"
+                            className="rph-box p-3.5 rounded-xl border-2 shadow-sm"
                             style={{
-                              backgroundColor: `${theme.primaryHex}15`,
-                              borderColor: `${theme.primaryHex}45`
+                              backgroundColor: `${theme.primaryHex}18`,
+                              borderColor: theme.primaryHex
                             }}
                             data-print-bg={theme.bgLightHex}
-                            data-print-border={theme.borderHex}
+                            data-print-border={theme.primaryHex}
                           >
                             <span
-                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              className="rph-box-header text-xs sm:text-sm font-black uppercase block mb-1 tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >
@@ -1194,19 +1194,19 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
 
                       {/* ================= INLINE EDITABLE REFLECTION SECTION ================= */}
                       <div
-                        className="p-4 rounded-xl border space-y-3 font-tech"
+                        className="rph-box p-4 rounded-xl border-2 space-y-3 font-tech shadow-sm"
                         style={{
-                          backgroundColor: `${theme.primaryHex}15`,
-                          borderColor: `${theme.primaryHex}50`
+                          backgroundColor: `${theme.primaryHex}18`,
+                          borderColor: theme.primaryHex
                         }}
                         data-print-bg={theme.bgLightHex}
-                        data-print-border={theme.borderHex}
+                        data-print-border={theme.primaryHex}
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <div className="flex items-center space-x-2">
                             <UserCheck className="w-4 h-4" style={{ color: theme.primaryHex }} />
                             <span
-                              className="text-xs sm:text-sm font-bold uppercase"
+                              className="rph-box-header text-xs sm:text-sm font-black uppercase tracking-wide"
                               style={{ color: theme.primaryHex }}
                               data-print-color={theme.primaryHex}
                             >

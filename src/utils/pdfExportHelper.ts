@@ -81,20 +81,49 @@ export async function exportWeeklyRphToPdf(
 
           // Apply cheerful themed background and border colors to content boxes
           clonedElement.querySelectorAll<HTMLElement>('[data-print-bg]').forEach((el) => {
-            el.style.backgroundColor = el.getAttribute('data-print-bg') || '#ffffff';
+            const bg = el.getAttribute('data-print-bg');
+            if (bg) {
+              el.style.setProperty('background-color', bg, 'important');
+            }
           });
           clonedElement.querySelectorAll<HTMLElement>('[data-print-border]').forEach((el) => {
-            el.style.borderColor = el.getAttribute('data-print-border') || '#cbd5e1';
+            const border = el.getAttribute('data-print-border');
+            if (border) {
+              el.style.setProperty('border-color', border, 'important');
+              el.style.setProperty('border-width', '2px', 'important');
+              el.style.setProperty('border-style', 'solid', 'important');
+            }
           });
           clonedElement.querySelectorAll<HTMLElement>('[data-print-color]').forEach((el) => {
-            el.style.color = el.getAttribute('data-print-color') || '#0f172a';
+            const color = el.getAttribute('data-print-color');
+            if (color) {
+              el.style.setProperty('color', color, 'important');
+            }
+          });
+
+          // Ensure card outer boundary has distinct theme border
+          const cardBorder = clonedElement.getAttribute('data-print-border');
+          if (cardBorder) {
+            clonedElement.style.setProperty('border-color', cardBorder, 'important');
+            clonedElement.style.setProperty('border-width', '2.5px', 'important');
+            clonedElement.style.setProperty('border-style', 'solid', 'important');
+          }
+
+          // Ensure readable text contrast inside boxes
+          clonedElement.querySelectorAll<HTMLElement>('.rph-box p, .rph-box li, .rph-box h4, .rph-box > span').forEach((el) => {
+            if (!el.getAttribute('data-print-color') && !el.classList.contains('rph-box-header')) {
+              el.style.color = '#0f172a';
+            }
           });
 
           // Ensure textareas render content cleanly with full visibility
           clonedElement.querySelectorAll('textarea').forEach((ta) => {
             ta.style.backgroundColor = '#ffffff';
             ta.style.color = '#0f172a';
-            ta.style.borderColor = ta.getAttribute('data-print-border') || '#94a3b8';
+            const border = ta.getAttribute('data-print-border') || '#cbd5e1';
+            ta.style.borderColor = border;
+            ta.style.borderWidth = '1.5px';
+            ta.style.borderStyle = 'solid';
           });
         }
       });
