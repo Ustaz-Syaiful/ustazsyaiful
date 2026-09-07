@@ -38,6 +38,7 @@ import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
 import { getJawiRph } from '../utils/jawiConverter';
 import { DatePickerField } from './DatePickerField';
 import { saveOrUpdateRptFromRph } from '../utils/rptStorage';
+import { getBidangTheme, BIDANG_THEMES, BidangTheme } from '../utils/bidangColors';
 
 export type DayKey = 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
 
@@ -672,6 +673,40 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
           </div>
         </div>
 
+        {/* Petunjuk Tema Warna e-RPH Ceria Mengikut Bidang */}
+        <div className="mt-3.5 pt-3 border-t border-cyan-500/20 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex items-center space-x-2 text-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+            <span className="font-bold text-cyan-300 font-tech uppercase text-[11px] sm:text-xs">
+              TEMA WARNA CETAKAN MENGIKUT BIDANG:
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            {Object.values(BIDANG_THEMES).map((themeItem) => (
+              <span
+                key={themeItem.id}
+                className="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold shadow-sm transition hover:scale-105"
+                style={{
+                  backgroundColor: `${themeItem.primaryHex}20`,
+                  color: themeItem.primaryHex,
+                  border: `1px solid ${themeItem.primaryHex}55`
+                }}
+                title={`${themeItem.name} (${themeItem.jawiName}): ${themeItem.description}`}
+              >
+                <span
+                  className="w-2 h-2 rounded-full inline-block shrink-0 shadow-sm"
+                  style={{ backgroundColor: themeItem.primaryHex }}
+                />
+                <span>{themeItem.name}</span>
+                {activeScript === 'jawi' && (
+                  <span className="font-jawi font-bold text-xs pr-0.5">({themeItem.jawiName})</span>
+                )}
+              </span>
+            ))}
+          </div>
+        </div>
+
         {/* Feedback notification toast */}
         {saveSuccessMsg && (
           <div className="mt-3 p-2 bg-emerald-950/80 border border-emerald-500/40 rounded-xl text-xs text-emerald-300 flex items-center space-x-2 font-tech">
@@ -738,257 +773,515 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                   const isTasmik = config.isTasmik || isTasmikRph(rph);
                   const displayItem = isJawi ? getJawiRph(rph) : rph;
                   const currentSlotNumber = displayIndex || config.slotNumber;
-
-                  // Tasmik standard data
-                  const tasmikData = isJawi ? TASMIK_OFFICIAL_DATA.jawi : TASMIK_OFFICIAL_DATA.rumi;
+                  const theme = getBidangTheme(rph.learningArea, isTasmik);
 
                   return (
                     <div
                       key={rph.id || `slot-${config.slotNumber}`}
                       data-printable-card="true"
-                      className="printable-rph-card bg-slate-950/95 rounded-2xl border border-cyan-500/30 p-5 sm:p-6 shadow-xl space-y-4 hover:border-cyan-400/60 transition hud-bracket text-slate-200 break-inside-avoid print:bg-white print:text-black print:border-black print:shadow-none print:m-0 print:p-6 print:rounded-none"
-                      style={{ pageBreakAfter: 'always', breakAfter: 'page', pageBreakInside: 'avoid', breakInside: 'avoid' }}
+                      data-bidang-id={theme.id}
+                      className="printable-rph-card bg-slate-950/95 rounded-2xl border-2 p-5 sm:p-6 shadow-xl space-y-4 hover:shadow-2xl transition text-slate-200 break-inside-avoid print:bg-white print:text-slate-900 print:shadow-none print:m-0 print:p-6 print:rounded-xl"
+                      style={{
+                        pageBreakAfter: 'always',
+                        breakAfter: 'page',
+                        pageBreakInside: 'avoid',
+                        breakInside: 'avoid',
+                        borderColor: theme.primaryHex
+                      }}
+                      data-print-border={theme.primaryHex}
                     >
-                    {/* Header: Slot Badge, Day, Date, Time, Class, Subject */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cyan-500/25 pb-3.5 print:border-black">
-                      <div className="flex items-center space-x-2">
-                        <span
-                          className="px-3 py-1 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 font-tech shadow"
-                          title={`Slot ${currentSlotNumber} daripada ${totalSelectedSlots} e-RPH yang dipaparkan (Jadual Waktu: Slot ${config.slotNumber})`}
+                      {/* Top Cheerful Bidang Accent Header Banner */}
+                      <div
+                        className="rounded-xl p-3 text-white flex flex-wrap items-center justify-between gap-2.5 shadow-sm"
+                        style={{
+                          background: `linear-gradient(135deg, ${theme.primaryHex}, ${theme.secondaryHex})`
+                        }}
+                        data-print-bg={theme.primaryHex}
+                      >
+                        <div className="flex items-center space-x-2.5 rtl:space-x-reverse">
+                          <span className="px-2.5 py-1 rounded-lg text-xs font-black bg-black/25 text-white tracking-wider border border-white/30 font-tech">
+                            SLOT {currentSlotNumber} / {totalSelectedSlots}
+                          </span>
+                          <div className="leading-tight">
+                            <span className="text-[10px] sm:text-xs opacity-90 uppercase block font-semibold">
+                              KEMENTERIAN PENDIDIKAN MALAYSIA • SK MERBAU PULAS
+                            </span>
+                            <span className="text-xs sm:text-sm font-extrabold uppercase tracking-wide">
+                              {isTasmik ? 'e-RPH TASMIK AL-QURAN (FORMAT RASMI)' : `e-RPH PENDIDIKAN ISLAM — BIDANG ${theme.name.toUpperCase()}`}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center space-x-2 rtl:space-x-reverse">
+                          <span
+                            className="px-3 py-1 rounded-full text-xs font-black bg-white shadow-md flex items-center space-x-1.5"
+                            style={{ color: theme.primaryHex }}
+                          >
+                            <span
+                              className="w-2 h-2 rounded-full inline-block"
+                              style={{ backgroundColor: theme.primaryHex }}
+                            />
+                            <span>{theme.name}</span>
+                            {isJawi && (
+                              <span className="font-jawi text-sm font-bold pr-0.5">({theme.jawiName})</span>
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Screen-only Controls (Status selector & Full Edit button) */}
+                      <div className="flex flex-wrap items-center justify-between gap-3 border-b pb-2.5 print:hidden font-tech" style={{ borderColor: `${theme.primaryHex}35` }}>
+                        <div className="flex items-center space-x-2">
+                          <span
+                            className="px-2.5 py-0.5 rounded-lg text-xs font-bold"
+                            style={{
+                              backgroundColor: `${theme.primaryHex}25`,
+                              color: theme.primaryHex,
+                              border: `1px solid ${theme.primaryHex}60`
+                            }}
+                          >
+                            Jadual: Slot {config.slotNumber}
+                          </span>
+                          {isTasmik && (
+                            <span className="px-2.5 py-0.5 rounded-lg text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center space-x-1">
+                              <Sparkles className="w-3 h-3 text-amber-400" />
+                              <span>FORMAT TASMIK KPM</span>
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center space-x-2">
+                          {/* Status selector */}
+                          <select
+                            value={rph.status}
+                            onChange={(e) => handleUpdateSlot(slotIndex, { status: e.target.value as any })}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${
+                              rph.status === 'Lengkap'
+                                ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40'
+                                : 'bg-amber-950 text-amber-300 border-amber-500/40'
+                            }`}
+                          >
+                            <option value="Lengkap">LENGKAP</option>
+                            <option value="Deraf">DERAF</option>
+                            <option value="Disemak PGB">DISEMAK PGB</option>
+                          </select>
+
+                          {/* Detailed Modal Edit */}
+                          <button
+                            type="button"
+                            onClick={() => onOpenDetailedModal({ ...rph, preferredScript: activeScript })}
+                            className="px-2.5 py-1 bg-slate-900 hover:bg-cyan-950 text-cyan-300 font-bold rounded-lg text-xs border border-cyan-500/30 flex items-center space-x-1 transition"
+                            title="Buka Borang e-RPH Terperinci & DSKP"
+                          >
+                            <Edit3 className="w-3 h-3" />
+                            <span>SUNTING PENUH</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Metadata Grid (Tarikh, Hari, Masa, Kelas, Bidang) */}
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 font-tech">
+                        <div
+                          className="p-3.5 rounded-xl border transition"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}15`,
+                            borderColor: `${theme.primaryHex}45`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
                         >
-                          SLOT {currentSlotNumber} / {totalSelectedSlots}
-                        </span>
-                        <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-slate-900 text-cyan-300 border border-cyan-500/40 font-tech">
-                          {config.periodLabel}
-                        </span>
-                        {isTasmik && (
-                          <span className="px-2.5 py-1 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 font-tech flex items-center space-x-1">
-                            <Sparkles className="w-3 h-3 text-amber-400" />
-                            <span>TASMIK (FORMAT RASMI KPM)</span>
+                          <span
+                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            HARI & TARIKH:
                           </span>
-                        )}
-                      </div>
+                          <span className={`font-bold text-white print:text-slate-900 block ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}>
+                            {isJawi ? `${config.dayJawi} • ${rph.date}` : `${config.day} • ${rph.date}`}
+                          </span>
+                        </div>
 
-                      <div className="flex items-center space-x-2 font-tech print:hidden">
-                        {/* Status selector */}
-                        <select
-                          value={rph.status}
-                          onChange={(e) => handleUpdateSlot(slotIndex, { status: e.target.value as any })}
-                          className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${
-                            rph.status === 'Lengkap'
-                              ? 'bg-emerald-950 text-emerald-300 border-emerald-500/40'
-                              : 'bg-amber-950 text-amber-300 border-amber-500/40'
-                          }`}
+                        <div
+                          className="p-3.5 rounded-xl border transition"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}15`,
+                            borderColor: `${theme.primaryHex}45`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
                         >
-                          <option value="Lengkap">LENGKAP</option>
-                          <option value="Deraf">DERAF</option>
-                          <option value="Disemak PGB">DISEMAK PGB</option>
-                        </select>
+                          <span
+                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            WAKTU & MASA:
+                          </span>
+                          <span className="font-bold text-white text-base sm:text-lg print:text-slate-900 block">
+                            {rph.time}
+                          </span>
+                        </div>
 
-                        {/* Detailed Modal Edit */}
-                        <button
-                          type="button"
-                          onClick={() => onOpenDetailedModal({ ...rph, preferredScript: activeScript })}
-                          className="px-2.5 py-1 bg-slate-900 hover:bg-cyan-950 text-cyan-300 font-bold rounded-lg text-xs border border-cyan-500/30 flex items-center space-x-1 transition"
-                          title="Buka Borang e-RPH Terperinci & DSKP"
+                        <div
+                          className="p-3.5 rounded-xl border transition"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}15`,
+                            borderColor: `${theme.primaryHex}45`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
                         >
-                          <Edit3 className="w-3 h-3" />
-                          <span>SUNTING PENUH</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Metadata Grid (Tarikh, Hari, Masa, Kelas, Bidang) */}
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-tech">
-                      <div className="bg-slate-900/80 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                        <span className="text-[10px] text-cyan-400/80 uppercase font-semibold block">HARI & TARIKH:</span>
-                        <span className="font-bold text-white text-xs print:text-black">
-                          {isJawi ? `${config.dayJawi} • ${rph.date}` : `${config.day} • ${rph.date}`}
-                        </span>
-                      </div>
-                      <div className="bg-slate-900/80 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                        <span className="text-[10px] text-cyan-400/80 uppercase font-semibold block">WAKTU & MASA:</span>
-                        <span className="font-bold text-white text-xs print:text-black">{rph.time}</span>
-                      </div>
-                      <div className="bg-slate-900/80 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                        <span className="text-[10px] text-cyan-400/80 uppercase font-semibold block">KELAS & TAHUN:</span>
-                        <span className="font-bold text-emerald-300 text-xs print:text-black">{rph.className}</span>
-                      </div>
-                      <div className="bg-slate-900/80 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                        <span className="text-[10px] text-cyan-400/80 uppercase font-semibold block">BIDANG PEMBELAJARAN:</span>
-                        <span className="font-bold text-cyan-300 text-xs print:text-black">
-                          {isJawi ? displayItem.learningArea : rph.learningArea}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Content Section: Topic, SK, SP, Objectives */}
-                    <div className={`space-y-3 ${isJawi ? 'text-right font-jawi leading-relaxed' : 'text-left font-sans-custom'}`} dir={isJawi ? 'rtl' : 'ltr'}>
-                      {/* Tajuk */}
-                      <div>
-                        <span className="text-xs text-cyan-400 font-tech font-bold uppercase block mb-0.5">
-                          {isJawi ? 'تاجوق ڤمبلاجرن:' : 'TAJUK PELAJARAN:'}
-                        </span>
-                        <h4 className="text-sm sm:text-base font-bold text-white print:text-black">
-                          {displayItem.topic}
-                        </h4>
-                      </div>
-
-                      {/* SK & SP */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/70 p-3.5 rounded-xl border border-cyan-500/20 print:bg-slate-50 print:text-black print:border-black">
-                        <div>
-                          <span className="text-[11px] font-bold text-cyan-300 font-tech uppercase block">
-                            {isJawi ? 'ستندرد کاندوڠن (SK):' : 'STANDARD KANDUNGAN (SK):'}
+                          <span
+                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            KELAS & TAHUN:
                           </span>
-                          <p className="text-xs text-slate-300 print:text-black mt-0.5">{displayItem.contentStandard}</p>
+                          <span className="font-bold text-white text-base sm:text-lg print:text-slate-900 block">
+                            {rph.className}
+                          </span>
                         </div>
-                        <div>
-                          <span className="text-[11px] font-bold text-cyan-300 font-tech uppercase block">
-                            {isJawi ? 'ستندرد ڤمبلاجرن (SP):' : 'STANDARD PEMBELAJARAN (SP):'}
+
+                        <div
+                          className="p-3.5 rounded-xl border transition"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}15`,
+                            borderColor: `${theme.primaryHex}45`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
+                        >
+                          <span
+                            className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            BIDANG PEMBELAJARAN:
                           </span>
-                          <p className="text-xs text-slate-300 print:text-black mt-0.5">{displayItem.learningStandard}</p>
+                          <span
+                            className={`font-extrabold print:text-slate-900 block ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            {isJawi ? (displayItem.learningArea || theme.jawiName) : (rph.learningArea || theme.name)}
+                          </span>
                         </div>
                       </div>
 
-                      {/* Objectives & Success Criteria */}
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 bg-slate-900/70 p-3.5 rounded-xl border border-cyan-500/20 print:bg-slate-50 print:text-black print:border-black">
-                        <div>
-                          <span className="text-[11px] font-bold text-cyan-300 font-tech uppercase block">
-                            {isJawi ? 'اوبجيکتيف ڤمبلاجرن:' : 'OBJEKTIF PEMBELAJARAN:'}
+                      {/* Content Section: Topic, SK, SP, Objectives */}
+                      <div className={`space-y-3.5 ${isJawi ? 'text-right font-jawi leading-loose' : 'text-left font-sans-custom'}`} dir={isJawi ? 'rtl' : 'ltr'}>
+                        {/* Tajuk Pelajaran */}
+                        <div
+                          className="p-4 rounded-xl border"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}12`,
+                            borderColor: `${theme.primaryHex}40`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
+                        >
+                          <span
+                            className="text-xs sm:text-sm font-tech font-bold uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            {isJawi ? 'تاجوق ڤمبلاجرن:' : 'TAJUK PELAJARAN:'}
                           </span>
-                          <ul className="list-disc list-inside text-xs text-slate-300 print:text-black mt-1 space-y-1">
-                            {displayItem.objectives.map((obj, i) => (
-                              <li key={i}>{obj}</li>
-                            ))}
-                          </ul>
+                          <h4 className={`font-bold text-white print:text-slate-900 ${isJawi ? 'text-2xl sm:text-3xl font-jawi leading-relaxed' : 'text-xl sm:text-2xl'}`}>
+                            {displayItem.topic}
+                          </h4>
                         </div>
-                        <div>
-                          <span className="text-[11px] font-bold text-cyan-300 font-tech uppercase block">
-                            {isJawi ? 'کريتيريا کجايأن:' : 'KRITERIA KEJAYAAN:'}
-                          </span>
-                          <ul className="list-disc list-inside text-xs text-slate-300 print:text-black mt-1 space-y-1">
-                            {displayItem.successCriteria.map((sc, i) => (
-                              <li key={i}>{sc}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
 
-                      {/* Activities */}
-                      <div className="bg-slate-900/70 p-3.5 rounded-xl border border-cyan-500/20 space-y-2 print:bg-slate-50 print:text-black print:border-black">
-                        <span className="text-[11px] font-bold text-cyan-300 font-tech uppercase block">
-                          {isJawi ? 'اکتيۏيتي ڤڠاجرن دان ڤمبلاجرن (PdPc):' : 'AKTIVITI PENGAJARAN & PEMBELAJARAN (PdPc):'}
-                        </span>
-                        <div className="text-xs text-slate-300 print:text-black space-y-1.5">
-                          <p>
-                            <b className="text-cyan-400 font-tech">{isJawi ? 'سيت ايندوکسي: ' : 'Set Induksi: '}</b>
-                            {displayItem.inductionActivity}
-                          </p>
+                        {/* SK & SP */}
+                        <div
+                          className="grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}10`,
+                            borderColor: `${theme.primaryHex}40`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
+                        >
                           <div>
-                            <b className="text-cyan-400 font-tech">{isJawi ? 'اکتيۏيتي اوتاما: ' : 'Aktiviti Utama:'}</b>
-                            <ul className="list-decimal list-inside mt-0.5 space-y-1">
-                              {displayItem.mainActivities.map((act, i) => (
-                                <li key={i}>{act}</li>
+                            <span
+                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              {isJawi ? 'ستندرد کاندوڠن (SK):' : 'STANDARD KANDUNGAN (SK):'}
+                            </span>
+                            <p className={`text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose font-medium' : 'text-base sm:text-lg leading-relaxed'}`}>
+                              {displayItem.contentStandard}
+                            </p>
+                          </div>
+                          <div>
+                            <span
+                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              {isJawi ? 'ستندرد ڤمبلاجرن (SP):' : 'STANDARD PEMBELAJARAN (SP):'}
+                            </span>
+                            <p className={`text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose font-medium' : 'text-base sm:text-lg leading-relaxed'}`}>
+                              {displayItem.learningStandard}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Objectives & Success Criteria */}
+                        <div
+                          className="grid grid-cols-1 md:grid-cols-2 gap-3.5 p-4 rounded-xl border"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}10`,
+                            borderColor: `${theme.primaryHex}40`
+                          }}
+                          data-print-bg={theme.bgLightHex}
+                          data-print-border={theme.borderHex}
+                        >
+                          <div>
+                            <span
+                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              {isJawi ? 'اوبجيکتيف ڤمبلاجرن:' : 'OBJEKTIF PEMBELAJARAN:'}
+                            </span>
+                            <ul className={`list-disc list-inside space-y-1.5 text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose' : 'text-base sm:text-lg leading-relaxed'}`}>
+                              {displayItem.objectives.map((obj, i) => (
+                                <li key={i}>{obj}</li>
                               ))}
                             </ul>
                           </div>
-                          <p>
-                            <b className="text-cyan-400 font-tech">{isJawi ? 'ڤنوتوڤ: ' : 'Penutup: '}</b>
-                            {displayItem.closureActivity}
-                          </p>
+                          <div>
+                            <span
+                              className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              {isJawi ? 'کريتيريا کجايأن:' : 'KRITERIA KEJAYAAN:'}
+                            </span>
+                            <ul className={`list-disc list-inside space-y-1.5 text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose' : 'text-base sm:text-lg leading-relaxed'}`}>
+                              {displayItem.successCriteria.map((sc, i) => (
+                                <li key={i}>{sc}</li>
+                              ))}
+                            </ul>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Pedagogical elements (BBM, EMK, Pentaksiran) */}
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs font-tech">
-                        <div className="bg-slate-900/90 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                          <span className="text-[10px] text-cyan-400/80 font-bold uppercase block">BBM:</span>
-                          <span className="text-slate-300 print:text-black">{displayItem.teachingAids.join(', ')}</span>
-                        </div>
-                        <div className="bg-slate-900/90 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                          <span className="text-[10px] text-cyan-400/80 font-bold uppercase block">EMK / KBAT:</span>
-                          <span className="text-slate-300 print:text-black">{displayItem.crossCurricularElements.join(', ')}</span>
-                        </div>
-                        <div className="bg-slate-900/90 p-2.5 rounded-xl border border-cyan-500/20 print:bg-slate-100 print:text-black print:border-black">
-                          <span className="text-[10px] text-cyan-400/80 font-bold uppercase block">PENTAKSIRAN PBD:</span>
-                          <span className="text-slate-300 print:text-black">{displayItem.pbdAssessment}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* ================= INLINE EDITABLE REFLECTION SECTION ================= */}
-                    <div className="p-4 bg-slate-900/90 rounded-xl border border-cyan-500/30 space-y-3 font-tech print:bg-slate-50 print:text-black print:border-black">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center space-x-2">
-                          <UserCheck className="w-4 h-4 text-cyan-400" />
-                          <span className="text-xs font-bold text-cyan-300 uppercase">
-                            {isJawi ? 'ريفليکسي دان تيليکن موريد:' : 'REFLEKSI & PENCAPAIAN MURID (EDIT INLINE):'}
+                        {/* Activities */}
+                        <div
+                          className="p-4 rounded-xl border space-y-3"
+                          style={{
+                            backgroundColor: `${theme.primaryHex}10`,
+                            borderColor: `${theme.primaryHex}40`
+                          }}
+                          data-print-bg="#ffffff"
+                          data-print-border={theme.borderHex}
+                        >
+                          <span
+                            className="text-xs sm:text-sm font-bold font-tech uppercase block mb-1"
+                            style={{ color: theme.primaryHex }}
+                            data-print-color={theme.primaryHex}
+                          >
+                            {isJawi ? 'اکتيۏيتي ڤڠاجرن دان ڤمبلاجرن (PdPc):' : 'AKTIVITI PENGAJARAN & PEMBELAJARAN (PdPc):'}
                           </span>
+                          <div className={`space-y-2.5 text-slate-100 print:text-slate-900 ${isJawi ? 'text-lg sm:text-xl font-jawi leading-loose' : 'text-base sm:text-lg leading-relaxed'}`}>
+                            <p>
+                              <b
+                                className="font-tech"
+                                style={{ color: theme.primaryHex }}
+                                data-print-color={theme.primaryHex}
+                              >
+                                {isJawi ? 'سيت ايندوکسي: ' : 'Set Induksi: '}
+                              </b>
+                              {displayItem.inductionActivity}
+                            </p>
+                            <div>
+                              <b
+                                className="font-tech"
+                                style={{ color: theme.primaryHex }}
+                                data-print-color={theme.primaryHex}
+                              >
+                                {isJawi ? 'اکتيۏيتي اوتاما: ' : 'Aktiviti Utama:'}
+                              </b>
+                              <ul className="list-decimal list-inside mt-1 space-y-1.5">
+                                {displayItem.mainActivities.map((act, i) => (
+                                  <li key={i}>{act}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            <p>
+                              <b
+                                className="font-tech"
+                                style={{ color: theme.primaryHex }}
+                                data-print-color={theme.primaryHex}
+                              >
+                                {isJawi ? 'ڤنوتوڤ: ' : 'Penutup: '}
+                              </b>
+                              {displayItem.closureActivity}
+                            </p>
+                          </div>
                         </div>
 
-                        {/* Quick reflection templates */}
-                        <div className="flex items-center space-x-1.5 print:hidden">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleUpdateSlot(slotIndex, {
-                                reflection: `Kehadiran: ${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.`
-                              })
-                            }
-                            className="text-[10px] px-2 py-0.5 rounded bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40"
+                        {/* Pedagogical elements (BBM, EMK, Pentaksiran) */}
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-tech">
+                          <div
+                            className="p-3.5 rounded-xl border"
+                            style={{
+                              backgroundColor: `${theme.primaryHex}15`,
+                              borderColor: `${theme.primaryHex}45`
+                            }}
+                            data-print-bg={theme.bgLightHex}
+                            data-print-border={theme.borderHex}
                           >
-                            + Format Penuh
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleUpdateSlot(slotIndex, {
-                                reflection: `Aktiviti PdPc ditangguhkan kerana program sekolah / mesyuarat rasmi. Sesi pembelajaran akan diganti pada tarikh yang ditetapkan.`
-                              })
-                            }
-                            className="text-[10px] px-2 py-0.5 rounded bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40"
+                            <span
+                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              BBM:
+                            </span>
+                            <span className={`text-slate-100 print:text-slate-900 block ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
+                              {displayItem.teachingAids.join(', ')}
+                            </span>
+                          </div>
+
+                          <div
+                            className="p-3.5 rounded-xl border"
+                            style={{
+                              backgroundColor: `${theme.primaryHex}15`,
+                              borderColor: `${theme.primaryHex}45`
+                            }}
+                            data-print-bg={theme.bgLightHex}
+                            data-print-border={theme.borderHex}
                           >
-                            + Ditangguhkan
-                          </button>
+                            <span
+                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              EMK / KBAT:
+                            </span>
+                            <span className={`text-slate-100 print:text-slate-900 block ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
+                              {displayItem.crossCurricularElements.join(', ')}
+                            </span>
+                          </div>
+
+                          <div
+                            className="p-3.5 rounded-xl border"
+                            style={{
+                              backgroundColor: `${theme.primaryHex}15`,
+                              borderColor: `${theme.primaryHex}45`
+                            }}
+                            data-print-bg={theme.bgLightHex}
+                            data-print-border={theme.borderHex}
+                          >
+                            <span
+                              className="text-xs sm:text-sm font-bold uppercase block mb-1"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              PENTAKSIRAN PBD:
+                            </span>
+                            <span className={`text-slate-100 print:text-slate-900 block ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
+                              {displayItem.pbdAssessment}
+                            </span>
+                          </div>
                         </div>
                       </div>
 
-                      {/* Editable Textarea */}
-                      <textarea
-                        value={isJawi ? (rph.jawiOverrides?.reflection || rph.reflection) : rph.reflection}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (isJawi) {
-                            handleUpdateSlot(slotIndex, {
-                              jawiOverrides: {
-                                ...(rph.jawiOverrides || {}),
-                                reflection: val
-                              }
-                            });
-                          } else {
-                            handleUpdateSlot(slotIndex, { reflection: val });
-                          }
+                      {/* ================= INLINE EDITABLE REFLECTION SECTION ================= */}
+                      <div
+                        className="p-4 rounded-xl border space-y-3 font-tech"
+                        style={{
+                          backgroundColor: `${theme.primaryHex}15`,
+                          borderColor: `${theme.primaryHex}50`
                         }}
-                        rows={3}
-                        placeholder="Masukkan catatan refleksi PdPc murid..."
-                        className={`w-full bg-slate-950 border border-cyan-500/30 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-cyan-500 focus:outline-none print:bg-white print:text-black print:border-black ${
-                          isJawi ? 'font-jawi text-right text-sm leading-relaxed' : 'font-sans-custom'
-                        }`}
-                        dir={isJawi ? 'rtl' : 'ltr'}
-                      />
+                        data-print-bg={theme.bgLightHex}
+                        data-print-border={theme.borderHex}
+                      >
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center space-x-2">
+                            <UserCheck className="w-4 h-4" style={{ color: theme.primaryHex }} />
+                            <span
+                              className="text-xs sm:text-sm font-bold uppercase"
+                              style={{ color: theme.primaryHex }}
+                              data-print-color={theme.primaryHex}
+                            >
+                              {isJawi ? 'ريفليکسي دان تيليکن موريد (سونتيغ لالو):' : 'REFLEKSI & PENCAPAIAN MURID (EDIT INLINE):'}
+                            </span>
+                          </div>
 
-                      {/* Footer: Disemak oleh Guru Besar / PK */}
-                      <div className="pt-2 border-t border-cyan-500/20 flex flex-wrap items-center justify-between text-[11px] text-slate-400 print:text-black">
-                        <span>Disemak Oleh: Guru Besar @ Penolong Kanan (SK Merbau Pulas)</span>
+                          {/* Quick reflection templates */}
+                          <div className="flex items-center space-x-1.5 print:hidden">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleUpdateSlot(slotIndex, {
+                                  reflection: `Kehadiran: ${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.`
+                                })
+                              }
+                              className="text-xs px-2.5 py-1 rounded-lg bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40"
+                            >
+                              + Format Penuh
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleUpdateSlot(slotIndex, {
+                                  reflection: `Aktiviti PdPc ditangguhkan kerana program sekolah / mesyuarat rasmi. Sesi pembelajaran akan diganti pada tarikh yang ditetapkan.`
+                                })
+                              }
+                              className="text-xs px-2.5 py-1 rounded-lg bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40"
+                            >
+                              + Ditangguhkan
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Editable Textarea */}
+                        <textarea
+                          value={isJawi ? (rph.jawiOverrides?.reflection || rph.reflection) : rph.reflection}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (isJawi) {
+                              handleUpdateSlot(slotIndex, {
+                                jawiOverrides: {
+                                  ...(rph.jawiOverrides || {}),
+                                  reflection: val
+                                }
+                              });
+                            } else {
+                              handleUpdateSlot(slotIndex, { reflection: val });
+                            }
+                          }}
+                          rows={3}
+                          placeholder="Masukkan catatan refleksi PdPc murid..."
+                          className={`w-full bg-slate-950 border rounded-xl p-3 text-white placeholder-slate-500 focus:ring-1 focus:outline-none print:bg-white print:text-slate-900 ${
+                            isJawi ? 'font-jawi text-right text-lg sm:text-xl leading-loose font-medium' : 'font-sans-custom text-base sm:text-lg leading-relaxed'
+                          }`}
+                          style={{ borderColor: `${theme.primaryHex}50` }}
+                          data-print-border={theme.borderHex}
+                          dir={isJawi ? 'rtl' : 'ltr'}
+                        />
+
+                        {/* Footer: Disemak oleh Guru Besar / PK */}
+                        <div
+                          className="pt-2 border-t flex flex-wrap items-center justify-between text-xs sm:text-sm font-medium text-slate-400 print:text-slate-900"
+                          style={{ borderColor: `${theme.primaryHex}35` }}
+                        >
+                          <span>Disemak Oleh: Guru Besar @ Penolong Kanan (SK Merbau Pulas)</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        ))
-      )}
+          ))
+        )}
       </div>
     </div>
   );

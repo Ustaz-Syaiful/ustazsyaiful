@@ -701,7 +701,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
         <form
           id="rph-modal-printable-content"
           onSubmit={handleSubmit}
-          className={`overflow-y-auto p-4 sm:p-6 space-y-5 flex-1 bg-slate-50 text-xs text-slate-700 ${
+          className={`overflow-y-auto p-4 sm:p-6 space-y-5 flex-1 bg-slate-50 text-sm sm:text-base text-slate-800 ${
             isJawi ? 'font-jawi text-right' : 'font-sans-custom text-left'
           }`}
           dir={isJawi ? 'rtl' : 'ltr'}
@@ -714,7 +714,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               {/* Informational Guidance Alert */}
               <div className="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-3.5 flex items-start space-x-3 rtl:space-x-reverse no-print">
                 <Info className="w-5 h-5 text-emerald-700 shrink-0 mt-0.5" />
-                <div className="text-xs text-emerald-950 leading-relaxed font-sans-custom">
+                <div className="text-xs sm:text-sm text-emerald-950 leading-relaxed font-sans-custom">
                   <p className="font-bold text-emerald-900">
                     Ketetapan Piawai e-RPH Tasmik KSSR (2025/2026):
                   </p>
@@ -725,32 +725,32 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Editable Session Controls Bar (no-print) */}
-              <div className="bg-white p-3 rounded-xl border border-slate-300 shadow-sm grid grid-cols-2 sm:grid-cols-5 gap-2.5 no-print font-sans-custom">
+              <div className="bg-white p-3.5 rounded-xl border border-slate-300 shadow-sm grid grid-cols-2 sm:grid-cols-5 gap-3 no-print font-sans-custom">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">{labels.week}:</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-800 mb-1">{labels.week}:</label>
                   <input
                     type="number"
                     value={formData.week}
                     onChange={(e) => setFormData({ ...formData, week: parseInt(e.target.value) || 1 })}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800"
+                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm sm:text-base font-bold text-slate-800"
                     dir="ltr"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">{labels.dayDate}:</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-800 mb-1">{labels.dayDate}:</label>
                   <div className="flex space-x-1 rtl:space-x-reverse">
                     {isJawi ? (
                       <input
                         type="text"
                         value={jawiState.day}
                         onChange={(e) => setJawiState({ ...jawiState, day: e.target.value })}
-                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800 font-jawi"
+                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-base sm:text-lg font-bold text-slate-800 font-jawi"
                       />
                     ) : (
                       <select
                         value={formData.day}
                         onChange={(e) => setFormData({ ...formData, day: e.target.value })}
-                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs"
+                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm sm:text-base font-semibold"
                       >
                         <option>Isnin</option>
                         <option>Selasa</option>
@@ -763,45 +763,45 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       type="date"
                       value={formData.date}
                       onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-1/2 bg-slate-50 border border-slate-300 rounded px-1 py-1 text-xs"
+                      className="w-1/2 bg-slate-50 border border-slate-300 rounded px-1.5 py-1.5 text-sm sm:text-base"
                       dir="ltr"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">{labels.time}:</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-800 mb-1">{labels.time}:</label>
                   <input
                     type="text"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs"
+                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm sm:text-base font-medium"
                     dir="ltr"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">{labels.class}:</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-800 mb-1">{labels.class}:</label>
                   {isJawi ? (
                     <input
                       type="text"
                       value={jawiState.className}
                       onChange={(e) => setJawiState({ ...jawiState, className: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800 font-jawi"
+                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-base sm:text-lg font-bold text-slate-800 font-jawi"
                     />
                   ) : (
                     <input
                       type="text"
                       value={formData.className}
                       onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-slate-800"
+                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm sm:text-base font-bold text-slate-800"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-700 mb-1">Status PdPc:</label>
+                  <label className="block text-xs sm:text-sm font-bold text-slate-800 mb-1">Status PdPc:</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value as any })}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2 py-1 text-xs font-bold text-emerald-800"
+                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm sm:text-base font-bold text-emerald-800"
                   >
                     <option value="Lengkap">Lengkap / Disahkan</option>
                     <option value="Deraf">Deraf Awal</option>
@@ -814,96 +814,96 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               <div className="bg-white border-2 border-slate-900 p-4 sm:p-6 text-slate-900 shadow-lg rounded-none print:m-0 print:p-2 print:border-2 print:border-black print:w-full">
                 {/* Header Banner matching PDF */}
                 <div className="border border-slate-900 p-2.5 mb-3 bg-purple-50/70 flex items-center justify-between">
-                  <div className="border border-slate-900 px-3 py-1 font-bold text-xs bg-white text-slate-900 flex items-center space-x-1.5 rtl:space-x-reverse">
+                  <div className="border border-slate-900 px-3 py-1 font-bold text-xs sm:text-sm bg-white text-slate-900 flex items-center space-x-1.5 rtl:space-x-reverse">
                     <span>{isJawi ? 'ميڠݢو' : 'Minggu'}</span>
-                    <span className="font-mono font-black text-sm px-1">[{formData.week}]</span>
+                    <span className="font-mono font-black text-base px-1">[{formData.week}]</span>
                   </div>
-                  <div className="text-center font-bold text-sm sm:text-base text-purple-950 font-jawi flex-1 mx-2 tracking-wide">
+                  <div className={`text-center font-bold text-base sm:text-lg text-purple-950 flex-1 mx-2 tracking-wide ${isJawi ? 'font-jawi text-lg sm:text-xl' : ''}`}>
                     {isJawi ? 'راخنغن فغاجرن هارين ( تسميع ) 2026/2025' : 'RANCANGAN PENGAJARAN HARIAN (TASMIK) 2025/2026'}
                   </div>
-                  <div className="border border-slate-900 w-7 h-7 flex items-center justify-center bg-white">
-                    <CheckSquare className="w-4 h-4 text-emerald-700" />
+                  <div className="border border-slate-900 w-8 h-8 flex items-center justify-center bg-white">
+                    <CheckSquare className="w-5 h-5 text-emerald-700" />
                   </div>
                 </div>
 
-                {/* Table matching PDF strictly */}
-                <table className="w-full border-collapse border border-slate-900 text-xs">
+                {/* Table matching PDF strictly with enlarged legible text in all boxes */}
+                <table className="w-full border-collapse border-2 border-slate-900 text-sm sm:text-base">
                   <tbody>
                     {/* Row 1: Subjek & Bidang */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 w-28 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 w-36 text-center text-sm sm:text-base">
                         {isJawi ? 'مات ڤالجرن' : 'Mata Pelajaran'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-semibold text-center text-slate-900">
+                      <td className={`border-r border-slate-900 p-3 font-bold text-center text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'فنديديقن إسلام ( تسميع )' : 'Pendidikan Islam (Tasmik)'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 w-24 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 w-32 text-center text-sm sm:text-base">
                         {isJawi ? 'بيدڠ' : 'Bidang'}
                       </td>
-                      <td className="p-2 font-bold text-center text-emerald-950">
+                      <td className={`p-3 font-bold text-center text-emerald-950 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'القرأن' : 'Al-Quran'}
                       </td>
                     </tr>
 
                     {/* Row 2: Hari, Tarikh, Masa, Kelas */}
                     <tr className="border-b border-slate-900 bg-amber-50/20">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'هاري' : 'Hari'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 text-center font-semibold">
+                      <td className={`border-r border-slate-900 p-3 text-center font-bold text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}>
                         {isJawi ? jawiState.day : formData.day}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'تاريـخ' : 'Tarikh'}
                       </td>
-                      <td className="p-2 text-center font-semibold">
+                      <td className="p-3 text-center font-bold text-slate-900 text-sm sm:text-base">
                         {formData.date}
                       </td>
                     </tr>
                     <tr className="border-b border-slate-900 bg-amber-50/20">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'ماس' : 'Masa'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 text-center font-semibold">
+                      <td className="border-r border-slate-900 p-3 text-center font-bold text-slate-900 text-sm sm:text-base">
                         {formData.time}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'كلس' : 'Kelas'}
                       </td>
-                      <td className="p-2 text-center font-bold text-slate-900">
+                      <td className={`p-3 text-center font-bold text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-relaxed' : 'text-base sm:text-lg'}`}>
                         {isJawi ? jawiState.className : formData.className}
                       </td>
                     </tr>
 
                     {/* Row 3: Tajuk (Piawai) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2.5 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         <div className="flex items-center justify-center space-x-1 rtl:space-x-reverse">
                           <span>{isJawi ? 'تاجوق' : 'Tajuk'}</span>
                         </div>
                       </td>
-                      <td colSpan={3} className="p-2.5 font-bold text-slate-900 text-center text-sm sm:text-base">
+                      <td colSpan={3} className={`p-3 font-bold text-slate-950 text-center ${isJawi ? 'font-jawi text-xl sm:text-2xl leading-relaxed' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'سورة / اقرا مغيكوت تاهف باجأن' : 'Surah / Iqra mengikut tahap bacaan'}
                       </td>
                     </tr>
 
                     {/* Row 4: Objektif Pembelajaran (Piawai 1-3) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2.5 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         {isJawi ? 'اوجبيكتيف فمبالجرن' : 'Objektif Pembelajaran'}
                       </td>
-                      <td colSpan={3} className="p-2.5 space-y-1.5 leading-relaxed">
+                      <td colSpan={3} className="p-3 space-y-2 leading-relaxed">
                         {isJawi ? (
                           <>
-                            <p className="font-jawi text-sm">.1 ممباخ كلمة / اية دان سورة/ اقرا دغن بيمبيغن ضورو.</p>
-                            <p className="font-jawi text-sm">.2 ممباخ اية درفد سورة دغن بتول.</p>
-                            <p className="font-jawi text-sm">.3 ممباخ سورة دغن بتول دان مغيكوت مخرج سرتا برتجويد.</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.1 ممباخ كلمة / اية دان سورة/ اقرا دغن بيمبيغن ضورو.</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.2 ممباخ اية درفد سورة دغن بتول.</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.3 ممباخ سورة دغن بتول دان مغيكوت مخرج سرتا برتجويد.</p>
                           </>
                         ) : (
                           <>
-                            <p>1. Membaca kalimah / ayat dan surah / iqra dengan bimbingan guru.</p>
-                            <p>2. Membaca ayat daripada surah dengan betul.</p>
-                            <p>3. Membaca surah dengan betul dan mengikut makhraj serta bertajwid.</p>
+                            <p className="text-base sm:text-lg font-medium">1. Membaca kalimah / ayat dan surah / iqra dengan bimbingan guru.</p>
+                            <p className="text-base sm:text-lg font-medium">2. Membaca ayat daripada surah dengan betul.</p>
+                            <p className="text-base sm:text-lg font-medium">3. Membaca surah dengan betul dan mengikut makhraj serta bertajwid.</p>
                           </>
                         )}
                       </td>
@@ -911,33 +911,37 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
 
                     {/* Row 5: Kriteria Kejayaan (Piawai) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         {isJawi ? 'كريترييا كجايأن' : 'Kriteria Kejayaan'}
                       </td>
-                      <td colSpan={3} className="p-2.5 font-semibold text-slate-900">
-                        {isJawi ? 'ممباخ سخارا كلس كومفولن دان اينديؤيدو' : 'Membaca secara kelas kumpulan dan individu'}
+                      <td colSpan={3} className="p-3 font-semibold text-slate-950">
+                        {isJawi ? (
+                          <span className="font-jawi text-lg sm:text-xl leading-loose">ممباخ سخارا كلس كومفولن دان اينديؤيدو</span>
+                        ) : (
+                          <span className="text-base sm:text-lg font-medium">Membaca secara kelas kumpulan dan individu</span>
+                        )}
                       </td>
                     </tr>
 
                     {/* Row 6: Aktiviti (Piawai 1-4) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2.5 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         {isJawi ? 'اكتيؤيتي' : 'Aktiviti'}
                       </td>
-                      <td colSpan={3} className="p-2.5 space-y-2 leading-relaxed">
+                      <td colSpan={3} className="p-3 space-y-2.5 leading-relaxed">
                         {isJawi ? (
                           <>
-                            <p className="font-jawi text-sm">.1 ضورو مندغر باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو</p>
-                            <p className="font-jawi text-sm">.2 التيه توبي مثبوت/ممباخ كلمة، فوتوغن اية سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو دغن بتول دان برتجويد.</p>
-                            <p className="font-jawi text-sm">.3 تسميع باخاءن سخارا اينديؤيدو (think pair share) دان دامل كومفولن (round robin).</p>
-                            <p className="font-jawi text-sm">.4 ممفردغركن باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا تلقي مشافهة</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.1 ضورو مندغر باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.2 التيه توبي مثبوت/ممباخ كلمة، فوتوغن اية سورة / اقرا مغيكوت تاهف باجأن موريد سخارا اينديؤيدو دغن بتول دان برتجويد.</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.3 تسميع باخاءن سخارا اينديؤيدو (think pair share) دان دامل كومفولن (round robin).</p>
+                            <p className="font-jawi text-lg sm:text-xl leading-loose">.4 ممفردغركن باخاءن سورة / اقرا مغيكوت تاهف باجأن موريد سخارا تلقي مشافهة</p>
                           </>
                         ) : (
                           <>
-                            <p>1. Guru mendengar bacaan surah / iqra mengikut tahap bacaan murid secara individu.</p>
-                            <p>2. Latih tubi menyebut/membaca kalimah, potongan ayat surah / iqra mengikut tahap bacaan murid secara individu dengan betul dan bertajwid.</p>
-                            <p>3. Tasmik bacaan secara individu (think pair share) dan dalam kumpulan (round robin).</p>
-                            <p>4. Memperdengarkan bacaan surah / iqra mengikut tahap bacaan murid secara talaqqi musyafahah.</p>
+                            <p className="text-base sm:text-lg font-medium">1. Guru mendengar bacaan surah / iqra mengikut tahap bacaan murid secara individu.</p>
+                            <p className="text-base sm:text-lg font-medium">2. Latih tubi menyebut/membaca kalimah, potongan ayat surah / iqra mengikut tahap bacaan murid secara individu dengan betul dan bertajwid.</p>
+                            <p className="text-base sm:text-lg font-medium">3. Tasmik bacaan secara individu (think pair share) dan dalam kumpulan (round robin).</p>
+                            <p className="text-base sm:text-lg font-medium">4. Memperdengarkan bacaan surah / iqra mengikut tahap bacaan murid secara talaqqi musyafahah.</p>
                           </>
                         )}
                       </td>
@@ -945,77 +949,77 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
 
                     {/* Row 7: Penilaian (Piawai) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         {isJawi ? 'فنيالين' : 'Penilaian'}
                       </td>
-                      <td colSpan={3} className="p-2 font-semibold">
+                      <td colSpan={3} className={`p-3 font-semibold ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
                         {isJawi ? '-منرغكن مقصود. / -مثبوتكن صيفت.٢ / - التيهن برتوليس. (PBD)' : '-Menerangkan maksud. / -Menyebutkan sifat-sifat. / - Latihan bertulis. (PBD)'}
                       </td>
                     </tr>
 
                     {/* Row 8: KBAT (Piawai) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         KBAT
                       </td>
-                      <td colSpan={3} className="p-2 font-semibold text-slate-900">
+                      <td colSpan={3} className={`p-3 font-semibold text-slate-950 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'مغفليكسي - اناليسيس حكوم تجويد دان اية.' : 'Mengaplikasi - Analisis hukum tajwid dan ayat.'}
                       </td>
                     </tr>
 
                     {/* Row 9: BBM & Pentaksiran (Piawai) */}
                     <tr className="border-b border-slate-900">
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'باهن بنتو مغاجر' : 'Bahan Bantu Mengajar'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-bold text-center text-emerald-950">
+                      <td className={`border-r border-slate-900 p-3 font-bold text-center text-emerald-950 ${isJawi ? 'font-jawi text-lg sm:text-xl' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'القرأن' : 'Al-Quran'}
                       </td>
-                      <td className="border-r border-slate-900 p-2 font-bold bg-slate-100/90 text-center">
+                      <td className="border-r border-slate-900 p-3 font-bold bg-slate-100/90 text-center text-sm sm:text-base">
                         {isJawi ? 'فنتكسرين' : 'Pentaksiran'}
                       </td>
-                      <td className="p-2 font-bold text-center text-slate-900">
+                      <td className={`p-3 font-bold text-center text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'ليسن' : 'Lisan'}
                       </td>
                     </tr>
 
                     {/* Row 10: Refleksi Guru */}
                     <tr className="border-b border-slate-900 bg-amber-50/20">
-                      <td className="border-r border-slate-900 p-2.5 font-bold bg-slate-100/90 text-center align-middle">
+                      <td className="border-r border-slate-900 p-3.5 font-bold bg-slate-100/90 text-center align-middle text-sm sm:text-base">
                         {isJawi ? 'ريفليكسي' : 'Refleksi'}
                       </td>
-                      <td colSpan={3} className="p-2.5 space-y-2">
-                        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                      <td colSpan={3} className="p-3.5 space-y-3">
+                        <div className="flex flex-wrap items-center gap-2.5 text-base sm:text-lg">
                           <input
                             type="number"
                             value={masteredCount}
                             onChange={(e) => setMasteredCount(parseInt(e.target.value) || 0)}
-                            className="w-12 text-center font-bold border border-slate-400 bg-white rounded px-1 py-0.5 text-slate-900"
+                            className="w-16 text-center font-bold border border-slate-400 bg-white rounded-lg px-2 py-1.5 text-slate-950 text-base sm:text-lg shadow-sm"
                             dir="ltr"
                           />
-                          <span className="font-bold text-slate-400">/</span>
+                          <span className="font-bold text-slate-400 text-lg">/</span>
                           <input
                             type="number"
                             value={totalStudents}
                             onChange={(e) => setTotalStudents(parseInt(e.target.value) || 0)}
-                            className="w-12 text-center font-bold border border-slate-400 bg-white rounded px-1 py-0.5 text-slate-900"
+                            className="w-16 text-center font-bold border border-slate-400 bg-white rounded-lg px-2 py-1.5 text-slate-950 text-base sm:text-lg shadow-sm"
                             dir="ltr"
                           />
-                          <span className="font-medium text-slate-800">
+                          <span className={`font-semibold text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
                             {isJawi ? 'اورغ موريد دافت مغواساءي أوجبيكتيف فمبالجرن دان دبري التيهن فغايأن / فغوكوهن' : 'orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan / pengukuhan.'}
                           </span>
                         </div>
-                        <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                        <div className="flex flex-wrap items-center gap-2.5 text-base sm:text-lg">
                           <input
                             type="number"
                             value={unmasteredCount}
                             onChange={(e) => setUnmasteredCount(parseInt(e.target.value) || 0)}
-                            className="w-12 text-center font-bold border border-slate-400 bg-white rounded px-1 py-0.5 text-slate-900"
+                            className="w-16 text-center font-bold border border-slate-400 bg-white rounded-lg px-2 py-1.5 text-slate-950 text-base sm:text-lg shadow-sm"
                             dir="ltr"
                           />
-                          <span className="font-bold text-slate-400">/</span>
-                          <span className="font-bold text-slate-900 px-2">{totalStudents}</span>
-                          <span className="font-medium text-slate-800">
+                          <span className="font-bold text-slate-400 text-lg">/</span>
+                          <span className="font-bold text-slate-950 px-2 text-lg">{totalStudents}</span>
+                          <span className={`font-semibold text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl leading-loose' : 'text-base sm:text-lg'}`}>
                             {isJawi ? 'اورغ موريد تيدق دافت مغواساءي اوجبيكتيف فمبالجرن دان دبري التيهن فموليهن' : 'orang murid tidak dapat menguasai objektif pembelajaran dan diberi latihan pemulihan.'}
                           </span>
                         </div>
@@ -1024,28 +1028,28 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
 
                     {/* Row 11: Tangguh */}
                     <tr className="border-b border-slate-900 bg-cyan-50/20">
-                      <td colSpan={4} className="p-2.5">
-                        <div className="text-xs font-bold mb-2 text-cyan-950 flex items-center justify-between">
-                          <span>{isJawi ? 'تغضوه : أكتيؤييت تيدق دافت دجالنكن كران -:' : 'Tangguh : Aktiviti tidak dapat dijalankan kerana -:'}</span>
-                          <span className="text-[10px] font-normal text-slate-500 font-sans-custom no-print">Tandakan jika berkaitan</span>
+                      <td colSpan={4} className="p-3.5">
+                        <div className="text-base sm:text-lg font-bold mb-2.5 text-cyan-950 flex items-center justify-between">
+                          <span className={isJawi ? 'font-jawi text-lg sm:text-xl' : ''}>{isJawi ? 'تغضوه : أكتيؤييت تيدق دافت دجالنكن كران -:' : 'Tangguh : Aktiviti tidak dapat dijalankan kerana -:'}</span>
+                          <span className="text-xs sm:text-sm font-normal text-slate-600 font-sans-custom no-print">Tandakan jika berkaitan</span>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-sm sm:text-base">
                           {currentTasmikData.tangguhOptions.map((opt) => {
                             const isChecked = selectedTangguhReasons.includes(opt);
                             return (
                               <label
                                 key={opt}
-                                className={`flex items-center space-x-1.5 rtl:space-x-reverse cursor-pointer p-1 rounded border transition ${
-                                  isChecked ? 'bg-cyan-100/70 border-cyan-400 font-bold text-cyan-950' : 'border-transparent hover:bg-slate-100'
+                                className={`flex items-center space-x-2 rtl:space-x-reverse cursor-pointer p-2 rounded-lg border transition ${
+                                  isChecked ? 'bg-cyan-100 border-cyan-500 font-bold text-cyan-950' : 'border-transparent hover:bg-slate-100 text-slate-800'
                                 }`}
                               >
                                 <input
                                   type="checkbox"
                                   checked={isChecked}
                                   onChange={() => toggleTangguh(opt)}
-                                  className="w-3.5 h-3.5 rounded text-cyan-700 border-slate-400"
+                                  className="w-4 h-4 rounded text-cyan-700 border-slate-400"
                                 />
-                                <span>{opt}</span>
+                                <span className={isJawi ? 'font-jawi text-base sm:text-lg' : 'text-sm sm:text-base'}>{opt}</span>
                               </label>
                             );
                           })}
@@ -1055,7 +1059,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
 
                     {/* Row 12: Disemak Oleh */}
                     <tr>
-                      <td colSpan={4} className="p-2.5 bg-slate-100/80 text-center font-bold text-xs text-slate-800">
+                      <td colSpan={4} className={`p-3 bg-slate-100/90 text-center font-bold text-slate-900 ${isJawi ? 'font-jawi text-lg sm:text-xl' : 'text-base sm:text-lg'}`}>
                         {isJawi ? 'د سيمق أوليه -: ضورو بسر @ فنولوغ کانن' : 'Disemak oleh -: Guru Besar @ Penolong Kanan'}
                       </td>
                     </tr>
@@ -1100,31 +1104,31 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Grid Meta Information */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                 <div>
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.week}:
                   </label>
                   <input
                     type="number"
                     value={formData.week}
                     onChange={(e) => setFormData({ ...formData, week: parseInt(e.target.value) || 1 })}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs focus:ring-1 focus:ring-emerald-500 font-bold"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-1 focus:ring-emerald-500 font-bold"
                     dir="ltr"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.dayDate}:
                   </label>
-                  <div className="flex space-x-1 rtl:space-x-reverse">
+                  <div className="flex space-x-1.5 rtl:space-x-reverse">
                     {isJawi ? (
                       <input
                         type="text"
                         value={jawiState.day}
                         onChange={(e) => setJawiState({ ...jawiState, day: e.target.value })}
-                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2 py-1.5 text-sm font-bold text-emerald-900 font-jawi"
+                        className="w-1/2 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-base sm:text-lg font-bold text-emerald-900 font-jawi"
                         placeholder="هاري"
                       />
                     ) : (
@@ -1135,7 +1139,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                           setFormData({ ...formData, day: newDay });
                           setJawiState({ ...jawiState, day: JAWI_DICTIONARY[newDay.toLowerCase()] || newDay });
                         }}
-                        className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2 py-1.5 text-xs"
+                        className="w-1/2 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-sm sm:text-base font-semibold"
                       >
                         <option>Isnin</option>
                         <option>Selasa</option>
@@ -1148,27 +1152,27 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       type="date"
                       value={formData.date}
                       onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                      className="w-1/2 bg-slate-50 border border-slate-300 rounded px-2 py-1.5 text-xs"
+                      className="w-1/2 bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-2 text-sm sm:text-base font-semibold"
                       dir="ltr"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.time}:
                   </label>
                   <input
                     type="text"
                     value={formData.time}
                     onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm sm:text-base font-semibold"
                     dir="ltr"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.class}:
                   </label>
                   {isJawi ? (
@@ -1176,20 +1180,20 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       type="text"
                       value={jawiState.className}
                       onChange={(e) => setJawiState({ ...jawiState, className: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm font-bold font-jawi text-slate-900"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base sm:text-lg font-bold font-jawi text-slate-900"
                     />
                   ) : (
                     <input
                       type="text"
                       value={formData.className}
                       onChange={(e) => setFormData({ ...formData, className: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs font-semibold"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm sm:text-base font-semibold"
                     />
                   )}
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.area}:
                   </label>
                   <select
@@ -1198,7 +1202,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       const newArea = e.target.value as any;
                       setFormData({ ...formData, learningArea: newArea });
                     }}
-                    className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs font-semibold text-emerald-800"
+                    className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-sm sm:text-base font-bold text-emerald-850"
                   >
                     <option value="Al-Quran">Al-Quran (القرءان)</option>
                     <option value="Hadis">Hadis (حديث)</option>
@@ -1212,7 +1216,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                 </div>
 
                 <div className="col-span-1 sm:col-span-3">
-                  <label className="font-semibold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.topic}:
                   </label>
                   {isJawi ? (
@@ -1220,7 +1224,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       type="text"
                       value={jawiState.topic}
                       onChange={(e) => setJawiState({ ...jawiState, topic: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-sm font-bold text-slate-900 font-jawi"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-xl sm:text-2xl font-bold text-slate-900 font-jawi leading-relaxed"
                       dir="rtl"
                     />
                   ) : (
@@ -1228,7 +1232,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       type="text"
                       value={formData.topic}
                       onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-xs font-semibold text-slate-800"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-base sm:text-lg font-bold text-slate-900"
                       dir="ltr"
                     />
                   )}
@@ -1236,9 +1240,9 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Standard Kandungan & Pembelajaran */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm">
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1.5">
                     {labels.contentStandard}:
                   </label>
                   {isJawi ? (
@@ -1246,7 +1250,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={jawiState.contentStandard}
                       onChange={(e) => setJawiState({ ...jawiState, contentStandard: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1254,13 +1258,13 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={formData.contentStandard}
                       onChange={(e) => setFormData({ ...formData, contentStandard: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1.5">
                     {labels.learningStandard}:
                   </label>
                   {isJawi ? (
@@ -1268,7 +1272,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={jawiState.learningStandard}
                       onChange={(e) => setJawiState({ ...jawiState, learningStandard: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1276,7 +1280,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={formData.learningStandard}
                       onChange={(e) => setFormData({ ...formData, learningStandard: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
@@ -1284,9 +1288,9 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Objektif & Kriteria Kejayaan */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm">
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1 text-emerald-800">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1.5 text-emerald-800">
                     {labels.objectives}
                   </label>
                   {isJawi ? (
@@ -1294,7 +1298,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(jawiState.objectives || []).join('\n')}
                       onChange={(e) => setJawiState({ ...jawiState, objectives: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       placeholder="ساتو اوبجيکتيف ڤر باريس..."
                       dir="rtl"
                     />
@@ -1303,14 +1307,14 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(formData.objectives || []).join('\n')}
                       onChange={(e) => setFormData({ ...formData, objectives: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs font-sans-custom"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg font-sans-custom leading-relaxed font-medium"
                       placeholder="Satu objektif per baris..."
                       dir="ltr"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1 text-amber-800">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1.5 text-amber-800">
                     {labels.successCriteria}
                   </label>
                   {isJawi ? (
@@ -1318,7 +1322,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(jawiState.successCriteria || []).join('\n')}
                       onChange={(e) => setJawiState({ ...jawiState, successCriteria: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       placeholder="ساتو کريتيريا ڤر باريس..."
                       dir="rtl"
                     />
@@ -1327,7 +1331,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(formData.successCriteria || []).join('\n')}
                       onChange={(e) => setFormData({ ...formData, successCriteria: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs font-sans-custom"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg font-sans-custom leading-relaxed font-medium"
                       placeholder="Satu kriteria per baris..."
                       dir="ltr"
                     />
@@ -1336,13 +1340,13 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Aktiviti Pengajaran */}
-              <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
-                <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider text-slate-700">
+              <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm space-y-4">
+                <h4 className="font-bold text-slate-900 text-sm sm:text-base uppercase tracking-wider text-slate-700">
                   {labels.activitiesHeading}
                 </h4>
 
                 <div>
-                  <label className="font-semibold text-slate-800 block mb-0.5">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.induction}
                   </label>
                   {isJawi ? (
@@ -1350,7 +1354,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={jawiState.inductionActivity}
                       onChange={(e) => setJawiState({ ...jawiState, inductionActivity: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1358,14 +1362,14 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={formData.inductionActivity}
                       onChange={(e) => setFormData({ ...formData, inductionActivity: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-800 block mb-0.5">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.main}
                   </label>
                   {isJawi ? (
@@ -1373,7 +1377,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(jawiState.mainActivities || []).join('\n')}
                       onChange={(e) => setJawiState({ ...jawiState, mainActivities: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       placeholder="ماسوقکن اکتيۏيتي ڤر باريس..."
                       dir="rtl"
                     />
@@ -1382,7 +1386,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={3}
                       value={(formData.mainActivities || []).join('\n')}
                       onChange={(e) => setFormData({ ...formData, mainActivities: e.target.value.split('\n') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       placeholder="Masukkan setiap langkah aktiviti per baris..."
                       dir="ltr"
                     />
@@ -1390,7 +1394,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-800 block mb-0.5">
+                  <label className="text-xs sm:text-sm font-bold text-slate-800 block mb-1">
                     {labels.closure}
                   </label>
                   {isJawi ? (
@@ -1398,7 +1402,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={jawiState.closureActivity}
                       onChange={(e) => setJawiState({ ...jawiState, closureActivity: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1406,7 +1410,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={formData.closureActivity}
                       onChange={(e) => setFormData({ ...formData, closureActivity: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
@@ -1414,9 +1418,9 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* BBM, EMK & PBD */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 bg-white p-4 sm:p-5 rounded-xl border border-slate-200 shadow-sm">
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1">
                     {labels.teachingAids}
                   </label>
                   {isJawi ? (
@@ -1424,7 +1428,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={(jawiState.teachingAids || []).join('، ')}
                       onChange={(e) => setJawiState({ ...jawiState, teachingAids: e.target.value.split('، ') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1432,13 +1436,13 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={(formData.teachingAids || []).join(', ')}
                       onChange={(e) => setFormData({ ...formData, teachingAids: e.target.value.split(', ') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1">
                     {labels.emk}
                   </label>
                   {isJawi ? (
@@ -1446,7 +1450,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={(jawiState.crossCurricularElements || []).join('، ')}
                       onChange={(e) => setJawiState({ ...jawiState, crossCurricularElements: e.target.value.split('، ') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1454,13 +1458,13 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={(formData.crossCurricularElements || []).join(', ')}
                       onChange={(e) => setFormData({ ...formData, crossCurricularElements: e.target.value.split(', ') })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
                 </div>
                 <div>
-                  <label className="font-bold text-slate-900 block mb-1">
+                  <label className="text-xs sm:text-sm font-bold text-slate-900 block mb-1">
                     {labels.pbd}
                   </label>
                   {isJawi ? (
@@ -1468,7 +1472,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={jawiState.pbdAssessment}
                       onChange={(e) => setJawiState({ ...jawiState, pbdAssessment: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-sm font-jawi leading-relaxed"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-lg sm:text-xl font-jawi leading-loose font-medium"
                       dir="rtl"
                     />
                   ) : (
@@ -1476,7 +1480,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                       rows={2}
                       value={formData.pbdAssessment}
                       onChange={(e) => setFormData({ ...formData, pbdAssessment: e.target.value })}
-                      className="w-full bg-slate-50 border border-slate-300 rounded p-2 text-xs"
+                      className="w-full bg-slate-50 border border-slate-300 rounded-lg p-3 text-base sm:text-lg leading-relaxed font-medium"
                       dir="ltr"
                     />
                   )}
@@ -1484,17 +1488,17 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
               </div>
 
               {/* Refleksi Guru */}
-              <div className="bg-emerald-50/70 p-4 rounded-xl border border-emerald-200">
-                <label className="font-bold text-emerald-950 block mb-1 flex items-center justify-between">
+              <div className="bg-emerald-50/70 p-4 sm:p-5 rounded-xl border border-emerald-200">
+                <label className="text-xs sm:text-sm font-bold text-emerald-950 block mb-1.5 flex items-center justify-between">
                   <span>{labels.reflection}</span>
-                  <span className="text-[10px] text-emerald-700 font-sans-custom">{labels.reflectionNote}</span>
+                  <span className="text-xs text-emerald-700 font-sans-custom">{labels.reflectionNote}</span>
                 </label>
                 {isJawi ? (
                   <textarea
                     rows={2}
                     value={jawiState.reflection}
                     onChange={(e) => setJawiState({ ...jawiState, reflection: e.target.value })}
-                    className="w-full bg-white border border-emerald-300 rounded p-2.5 text-sm text-slate-800 font-jawi leading-relaxed"
+                    className="w-full bg-white border border-emerald-300 rounded-lg p-3 text-lg sm:text-xl text-slate-900 font-jawi leading-loose font-medium"
                     dir="rtl"
                   />
                 ) : (
@@ -1502,7 +1506,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                     rows={2}
                     value={formData.reflection}
                     onChange={(e) => setFormData({ ...formData, reflection: e.target.value })}
-                    className="w-full bg-white border border-emerald-300 rounded p-2.5 text-xs text-slate-800 font-sans-custom"
+                    className="w-full bg-white border border-emerald-300 rounded-lg p-3 text-base sm:text-lg text-slate-900 font-sans-custom leading-relaxed font-medium"
                     dir="ltr"
                   />
                 )}

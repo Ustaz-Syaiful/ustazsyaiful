@@ -57,12 +57,46 @@ export async function exportWeeklyRphToPdf(
         });
       }
 
-      // Render the card to canvas with good resolution
+      // Render the card to canvas with good resolution and vibrant cheerful print colors
       const canvas = await html2canvas(card, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        onclone: (_clonedDoc, clonedElement) => {
+          // Reset main card to crisp white background and clear text
+          clonedElement.style.backgroundColor = '#ffffff';
+          clonedElement.style.color = '#0f172a';
+          clonedElement.style.boxShadow = 'none';
+
+          // Hide on-screen only elements (buttons, selectors, controls)
+          clonedElement.querySelectorAll('.print\\:hidden, .no-print, [data-no-print="true"]').forEach((el) => {
+            (el as HTMLElement).style.display = 'none';
+          });
+
+          // Show print-only elements
+          clonedElement.querySelectorAll('.print\\:block, .print\\:flex').forEach((el) => {
+            (el as HTMLElement).style.display = 'block';
+          });
+
+          // Apply cheerful themed background and border colors to content boxes
+          clonedElement.querySelectorAll<HTMLElement>('[data-print-bg]').forEach((el) => {
+            el.style.backgroundColor = el.getAttribute('data-print-bg') || '#ffffff';
+          });
+          clonedElement.querySelectorAll<HTMLElement>('[data-print-border]').forEach((el) => {
+            el.style.borderColor = el.getAttribute('data-print-border') || '#cbd5e1';
+          });
+          clonedElement.querySelectorAll<HTMLElement>('[data-print-color]').forEach((el) => {
+            el.style.color = el.getAttribute('data-print-color') || '#0f172a';
+          });
+
+          // Ensure textareas render content cleanly with full visibility
+          clonedElement.querySelectorAll('textarea').forEach((ta) => {
+            ta.style.backgroundColor = '#ffffff';
+            ta.style.color = '#0f172a';
+            ta.style.borderColor = ta.getAttribute('data-print-border') || '#94a3b8';
+          });
+        }
       });
 
       const imgData = canvas.toDataURL('image/jpeg', 0.95);
