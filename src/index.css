@@ -63,7 +63,7 @@
 @media print {
   @page {
     size: A4 portrait;
-    margin: 8mm 10mm 8mm 10mm;
+    margin: 5mm 7mm 5mm 7mm;
   }
 
   html, body, #root, #root > div, main, #weekly-rph-print-container {
@@ -107,7 +107,7 @@
     display: block !important;
   }
 
-  /* Strict 1 e-RPH per page with Cheerful Bidang Colors */
+  /* Strict 1 e-RPH per page with Cheerful Bidang Colors & Compact Proportion */
   .printable-rph-card {
     page-break-before: auto !important;
     page-break-after: always !important;
@@ -115,27 +115,59 @@
     page-break-inside: avoid !important;
     break-inside: avoid !important;
     margin: 0 0 0 0 !important;
-    padding: 6mm 8mm !important;
+    padding: 3mm 4.5mm !important;
     background: #ffffff !important;
     box-shadow: none !important;
     width: 100% !important;
     box-sizing: border-box !important;
-    min-height: 260mm !important;
-    max-height: 280mm !important;
+    height: auto !important;
+    max-height: 284mm !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
-    justify-content: space-between !important;
+    justify-content: flex-start !important;
+    gap: 1.4mm !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
-    border-radius: 12px !important;
-    border-width: 2.5px !important;
+    border-radius: 8px !important;
+    border-width: 2px !important;
     border-style: solid !important;
   }
 
   .printable-rph-card:last-child {
     page-break-after: auto !important;
     break-after: auto !important;
+  }
+
+  /* Compact spacing within printable card to ensure full visibility on 1 page */
+  .printable-rph-card .space-y-4 > :not([hidden]) ~ :not([hidden]),
+  .printable-rph-card .space-y-3\.5 > :not([hidden]) ~ :not([hidden]),
+  .printable-rph-card .space-y-3 > :not([hidden]) ~ :not([hidden]),
+  .printable-rph-card .space-y-2\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 1.4mm !important;
+  }
+
+  .printable-rph-card .space-y-1\.5 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.6mm !important;
+  }
+
+  .printable-rph-card .gap-3\.5,
+  .printable-rph-card .gap-2\.5 {
+    gap: 1.4mm !important;
+  }
+
+  /* Top Banner in print */
+  .printable-rph-card > div:first-child {
+    padding: 1.6mm 2.5mm !important;
+    border-radius: 6px !important;
+    margin-bottom: 0.5mm !important;
+  }
+  .printable-rph-card > div:first-child span {
+    font-size: 7.2pt !important;
+  }
+  .printable-rph-card > div:first-child .text-xs,
+  .printable-rph-card > div:first-child .text-sm {
+    font-size: 7.8pt !important;
   }
 
   /* Force background colors on all printable elements */
@@ -287,23 +319,89 @@
     color: #ffffff !important;
   }
 
+  /* Box padding and layout */
+  .printable-rph-card .rph-box {
+    padding: 1.6mm 2.2mm !important;
+    border-radius: 6px !important;
+    border-width: 1.5px !important;
+  }
+
+  /* Box labels / headers */
+  .printable-rph-card .rph-box-header {
+    font-size: 6.8pt !important;
+    line-height: 1.15 !important;
+    margin-bottom: 0.5mm !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.02em !important;
+  }
+
+  /* Top metadata values (Hari, Masa, Kelas, Bidang) */
+  .printable-rph-card .rph-box > span:not(.rph-box-header) {
+    font-size: 8pt !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Lesson Topic Title */
+  .printable-rph-card h4 {
+    font-size: 8.8pt !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+  }
+
+  /* General text, lists, and items */
   .printable-rph-card p,
   .printable-rph-card li,
   .printable-rph-card span:not([class*="text-"]):not([class*="bg-"]) {
-    color: #0f172a;
+    font-size: 7.8pt !important;
+    line-height: 1.25 !important;
+    color: #0f172a !important;
     text-shadow: none !important;
   }
 
+  .printable-rph-card ul,
+  .printable-rph-card ol {
+    margin: 0 !important;
+    padding-left: 3.5mm !important;
+  }
+
+  .printable-rph-card li {
+    margin-bottom: 0.3mm !important;
+  }
+
+  .printable-rph-card b {
+    font-size: 7.8pt !important;
+    font-weight: 700 !important;
+  }
+
+  /* Jawi script print sizing: balanced and legible */
+  .printable-rph-card .font-jawi {
+    font-size: 8.8pt !important;
+    line-height: 1.3 !important;
+  }
+  .printable-rph-card h4.font-jawi {
+    font-size: 9.8pt !important;
+    line-height: 1.25 !important;
+  }
+  .printable-rph-card span.font-jawi {
+    font-size: 8.2pt !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Reflection textarea */
   .printable-rph-card textarea {
     border: 1.5px solid currentColor !important;
     background: #ffffff !important;
     color: #0f172a !important;
-    font-size: 9.5pt !important;
-    line-height: 1.45 !important;
-    padding: 4px 6px !important;
+    font-size: 7.8pt !important;
+    line-height: 1.25 !important;
+    padding: 1.2mm 2mm !important;
     resize: none !important;
-    min-height: 48px !important;
-    max-height: 55px !important;
+    min-height: 28px !important;
+    max-height: 38px !important;
+    height: 32px !important;
+    border-radius: 4px !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

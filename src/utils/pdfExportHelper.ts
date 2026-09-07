@@ -68,6 +68,9 @@ export async function exportWeeklyRphToPdf(
           clonedElement.style.backgroundColor = '#ffffff';
           clonedElement.style.color = '#0f172a';
           clonedElement.style.boxShadow = 'none';
+          clonedElement.style.width = '780px';
+          clonedElement.style.padding = '10px 14px';
+          clonedElement.style.boxSizing = 'border-box';
 
           // Hide on-screen only elements (buttons, selectors, controls)
           clonedElement.querySelectorAll('.print\\:hidden, .no-print, [data-no-print="true"]').forEach((el) => {
@@ -90,7 +93,7 @@ export async function exportWeeklyRphToPdf(
             const border = el.getAttribute('data-print-border');
             if (border) {
               el.style.setProperty('border-color', border, 'important');
-              el.style.setProperty('border-width', '2px', 'important');
+              el.style.setProperty('border-width', '1.5px', 'important');
               el.style.setProperty('border-style', 'solid', 'important');
             }
           });
@@ -105,18 +108,86 @@ export async function exportWeeklyRphToPdf(
           const cardBorder = clonedElement.getAttribute('data-print-border');
           if (cardBorder) {
             clonedElement.style.setProperty('border-color', cardBorder, 'important');
-            clonedElement.style.setProperty('border-width', '2.5px', 'important');
+            clonedElement.style.setProperty('border-width', '2px', 'important');
             clonedElement.style.setProperty('border-style', 'solid', 'important');
+            clonedElement.style.borderRadius = '8px';
           }
 
-          // Ensure readable text contrast inside boxes
-          clonedElement.querySelectorAll<HTMLElement>('.rph-box p, .rph-box li, .rph-box h4, .rph-box > span').forEach((el) => {
+          // Top Header Banner in cloned element
+          const topBanner = clonedElement.querySelector<HTMLElement>(':scope > div:first-child');
+          if (topBanner) {
+            topBanner.style.padding = '5px 8px';
+            topBanner.style.borderRadius = '6px';
+            topBanner.style.marginBottom = '4px';
+          }
+
+          // Compact vertical rhythm: suppress large space-y and gaps
+          clonedElement.querySelectorAll<HTMLElement>('.space-y-4, .space-y-3\\.5, .space-y-3, .space-y-2\\.5').forEach((el) => {
+            Array.from(el.children).forEach((child, idx) => {
+              if (idx > 0) {
+                (child as HTMLElement).style.marginTop = '4px';
+              }
+            });
+          });
+          clonedElement.querySelectorAll<HTMLElement>('.space-y-1\\.5').forEach((el) => {
+            Array.from(el.children).forEach((child, idx) => {
+              if (idx > 0) {
+                (child as HTMLElement).style.marginTop = '2px';
+              }
+            });
+          });
+          clonedElement.querySelectorAll<HTMLElement>('.gap-3\\.5, .gap-2\\.5').forEach((el) => {
+            el.style.gap = '4px';
+          });
+
+          // Compact box sizing
+          clonedElement.querySelectorAll<HTMLElement>('.rph-box').forEach((box) => {
+            box.style.padding = '5px 7px';
+            box.style.borderRadius = '5px';
+            box.style.borderWidth = '1.5px';
+          });
+
+          // Box headers / labels
+          clonedElement.querySelectorAll<HTMLElement>('.rph-box-header').forEach((hdr) => {
+            hdr.style.fontSize = '8.5px';
+            hdr.style.marginBottom = '2px';
+            hdr.style.lineHeight = '1.15';
+            hdr.style.fontWeight = '900';
+          });
+
+          // Headings
+          clonedElement.querySelectorAll<HTMLElement>('h4').forEach((h4) => {
+            h4.style.fontSize = '11.5px';
+            h4.style.lineHeight = '1.2';
+            h4.style.margin = '0';
+            h4.style.fontWeight = '800';
+          });
+
+          // Text elements
+          clonedElement.querySelectorAll<HTMLElement>('p, li, .rph-box > span:not(.rph-box-header)').forEach((el) => {
             if (!el.getAttribute('data-print-color') && !el.classList.contains('rph-box-header')) {
               el.style.color = '#0f172a';
             }
+            el.style.fontSize = '10px';
+            el.style.lineHeight = '1.25';
           });
 
-          // Ensure textareas render content cleanly with full visibility
+          clonedElement.querySelectorAll<HTMLElement>('ul, ol').forEach((el) => {
+            el.style.margin = '0';
+            el.style.paddingLeft = '14px';
+          });
+          clonedElement.querySelectorAll<HTMLElement>('li').forEach((el) => {
+            el.style.marginBottom = '1.5px';
+          });
+
+          // Jawi typography adjustment for single-page harmony
+          clonedElement.querySelectorAll<HTMLElement>('.font-jawi').forEach((el) => {
+            const isHeading = el.tagName.toLowerCase() === 'h4';
+            el.style.fontSize = isHeading ? '12.5px' : '11px';
+            el.style.lineHeight = '1.3';
+          });
+
+          // Textarea: compact and readable without overflow
           clonedElement.querySelectorAll('textarea').forEach((ta) => {
             ta.style.backgroundColor = '#ffffff';
             ta.style.color = '#0f172a';
@@ -124,6 +195,13 @@ export async function exportWeeklyRphToPdf(
             ta.style.borderColor = border;
             ta.style.borderWidth = '1.5px';
             ta.style.borderStyle = 'solid';
+            ta.style.fontSize = '10px';
+            ta.style.lineHeight = '1.25';
+            ta.style.padding = '3px 5px';
+            ta.style.minHeight = '28px';
+            ta.style.maxHeight = '36px';
+            ta.style.height = '32px';
+            ta.style.borderRadius = '4px';
           });
         }
       });
