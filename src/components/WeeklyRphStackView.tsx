@@ -1149,22 +1149,40 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           <div className="flex items-center space-x-1.5 print:hidden">
                             <button
                               type="button"
-                              onClick={() =>
-                                handleUpdateSlot(slotIndex, {
-                                  reflection: `Kehadiran: ${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.`
-                                })
-                              }
+                              onClick={() => {
+                                if (isJawi) {
+                                  handleUpdateSlot(slotIndex, {
+                                    jawiOverrides: {
+                                      ...(rph.jawiOverrides || {}),
+                                      reflection: `کحاضيرن: ${config.defaultTotalStudents}/${config.defaultTotalStudents} اورڠ موريد.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} اورڠ موريد داڤت مڠواساءي اوبجيکتيف ڤمبلاجرن دغن باءيق دان دبري لاتيهن ڤڠوکوهن.`
+                                    }
+                                  });
+                                } else {
+                                  handleUpdateSlot(slotIndex, {
+                                    reflection: `Kehadiran: ${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid.\n${config.defaultTotalStudents}/${config.defaultTotalStudents} orang murid dapat menguasai objektif pembelajaran dan diberi latihan pengayaan.`
+                                  });
+                                }
+                              }}
                               className="text-[11px] px-2 py-0.5 rounded-lg bg-cyan-950 hover:bg-cyan-900 text-cyan-300 border border-cyan-500/40"
                             >
                               + Format Penuh
                             </button>
                             <button
                               type="button"
-                              onClick={() =>
-                                handleUpdateSlot(slotIndex, {
-                                  reflection: `Aktiviti PdPc ditangguhkan kerana program sekolah / mesyuarat rasmi. Sesi pembelajaran akan diganti pada tarikh yang ditetapkan.`
-                                })
-                              }
+                              onClick={() => {
+                                if (isJawi) {
+                                  handleUpdateSlot(slotIndex, {
+                                    jawiOverrides: {
+                                      ...(rph.jawiOverrides || {}),
+                                      reflection: `اکتيۏيتي PdPc دتڠݢوهکن کران ڤروݢرام سکوله / مسيورات رسمي. سيسي ڤمبلاجرن اکن دݢنتي ڤد تاريخ يڠ دتتڤکن.`
+                                    }
+                                  });
+                                } else {
+                                  handleUpdateSlot(slotIndex, {
+                                    reflection: `Aktiviti PdPc ditangguhkan kerana program sekolah / mesyuarat rasmi. Sesi pembelajaran akan diganti pada tarikh yang ditetapkan.`
+                                  });
+                                }
+                              }}
                               className="text-[11px] px-2 py-0.5 rounded-lg bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-500/40"
                             >
                               + Ditangguhkan
@@ -1172,8 +1190,9 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
                         </div>
 
-                        {/* Textarea container with inner box as in screenshot */}
+                        {/* Reflection container with inner box */}
                         <div className="bg-slate-950/80 print:bg-white border border-slate-700 print:border-slate-300 rounded-lg p-2.5">
+                          {/* Screen-only editable textarea */}
                           <textarea
                             value={isJawi ? (rph.jawiOverrides?.reflection || rph.reflection) : rph.reflection}
                             onChange={(e) => {
@@ -1189,13 +1208,25 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                                 handleUpdateSlot(slotIndex, { reflection: val });
                               }
                             }}
-                            rows={2}
+                            rows={3}
                             placeholder="Masukkan catatan refleksi PdPc murid..."
-                            className={`w-full bg-transparent border-0 resize-none focus:outline-none text-xs sm:text-sm text-slate-100 print:text-slate-900 font-medium leading-relaxed ${
+                            className={`w-full bg-transparent border-0 resize-none focus:outline-none text-xs sm:text-sm text-slate-100 font-medium leading-relaxed min-h-[50px] print:hidden ${
                               isJawi ? 'font-jawi text-right text-sm sm:text-base' : 'font-sans-custom'
                             }`}
                             dir={isJawi ? 'rtl' : 'ltr'}
                           />
+
+                          {/* Print-only reflection display: 100% visible, complete text, zero scrollbars, zero clipping */}
+                          <div
+                            className={`reflection-print-content hidden print:block w-full text-slate-900 font-medium whitespace-pre-wrap leading-relaxed ${
+                              isJawi ? 'font-jawi text-right text-xs sm:text-sm' : 'font-sans-custom text-xs sm:text-sm'
+                            }`}
+                            data-reflection-print="true"
+                            data-print-only="true"
+                            dir={isJawi ? 'rtl' : 'ltr'}
+                          >
+                            {(isJawi ? (rph.jawiOverrides?.reflection || rph.reflection) : rph.reflection) || (isJawi ? 'موريد مڠواساءي اوبجيکتيف ڤمبلاجرن دغن باءيق.' : 'Murid menguasai objektif pembelajaran dengan baik.')}
+                          </div>
                         </div>
 
                         <div className="pt-1 border-t border-slate-700/60 print:border-slate-300 text-xs font-medium text-slate-400 print:text-slate-700">

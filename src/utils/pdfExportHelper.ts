@@ -197,20 +197,20 @@ export async function exportWeeklyRphToPdf(
             el.style.lineHeight = '1.4';
           });
 
-          // Textarea: natural proportion and clear text
-          clonedElement.querySelectorAll('textarea').forEach((ta) => {
-            ta.style.backgroundColor = '#ffffff';
-            ta.style.color = '#0f172a';
-            ta.style.borderColor = '#cbd5e1';
-            ta.style.borderWidth = '1.5px';
-            ta.style.borderStyle = 'solid';
-            ta.style.fontSize = '11.5px';
-            ta.style.lineHeight = '1.35';
-            ta.style.padding = '6px 9px';
-            ta.style.minHeight = '38px';
-            ta.style.maxHeight = '50px';
-            ta.style.height = '44px';
-            ta.style.borderRadius = '6px';
+          // Reflection print text: ensure all lines and words are fully visible
+          clonedElement.querySelectorAll<HTMLElement>('textarea').forEach((ta) => {
+            ta.style.display = 'none';
+          });
+          clonedElement.querySelectorAll<HTMLElement>('.reflection-print-content, [data-reflection-print="true"]').forEach((el) => {
+            el.style.display = 'block';
+            el.style.whiteSpace = 'pre-wrap';
+            el.style.wordBreak = 'break-word';
+            el.style.color = '#0f172a';
+            const isJawi = el.classList.contains('font-jawi') || el.getAttribute('dir') === 'rtl';
+            el.style.fontSize = isJawi ? '13.5px' : '11.5px';
+            el.style.lineHeight = isJawi ? '1.45' : '1.35';
+            el.style.padding = '0';
+            el.style.margin = '0';
           });
         }
       });
