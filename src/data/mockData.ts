@@ -23,11 +23,11 @@ import {
 import { createTasmikRph } from './tasmikConstants';
 
 export const defaultTeacherProfile: TeacherProfile = {
-  name: 'Muhammad Harith bin Abdullah',
+  name: 'Syaiful',
   salutation: 'Ustaz',
   email: 'g-77071151@moe-dl.edu.my',
   phone: '019-3456789',
-  school: 'SK Seri Saujana (SBT)',
+  school: 'SK Merbau Pulas',
   grade: 'DG44 (Guru Cemerlang Pendidikan Islam)',
   option: 'Pendidikan Islam & Bahasa Arab (j-QAF)',
   teachingExperience: 14,
@@ -623,7 +623,7 @@ export const sampleTasmikRecords: TasmikRecord[] = [
     hafazanProgress: 'Surah An-Naba & An-Nazi\'at (Hafaz Penuh)',
     lastTasmikDate: '2026-09-14',
     status: 'Cemerlang',
-    tasmikTeacher: 'Ustaz Muhammad Harith'
+    tasmikTeacher: 'Ustaz Syaiful'
   },
   {
     id: 'tas-02',
@@ -647,7 +647,7 @@ export const sampleTasmikRecords: TasmikRecord[] = [
     hafazanProgress: 'Surah Al-A\'la & Al-Ghasyiyah',
     lastTasmikDate: '2026-09-11',
     status: 'Lancar',
-    tasmikTeacher: 'Ustaz Muhammad Harith'
+    tasmikTeacher: 'Ustaz Syaiful'
   },
   {
     id: 'tas-04',
@@ -659,7 +659,7 @@ export const sampleTasmikRecords: TasmikRecord[] = [
     hafazanProgress: 'Surah Al-Kafirun & An-Nasr',
     lastTasmikDate: '2026-09-10',
     status: 'Perlu Bimbingan Tajwid',
-    tasmikTeacher: 'Ustaz Muhammad Harith'
+    tasmikTeacher: 'Ustaz Syaiful'
   },
   {
     id: 'tas-05',
@@ -686,14 +686,14 @@ export const sampleSahsiahRecords: StudentSahsiahRecord[] = [
     badge: 'Bintang Sahsiah Emas',
     goodDeedsCount: 3,
     goodDeeds: [
-      { id: 'gd-1', title: 'Imam Solat Zohor Berjemaah Surau An-Nur', category: 'Solat Berjemaah', points: 20, date: '2026-09-14', recordedBy: 'Ustaz Muhammad Harith' },
+      { id: 'gd-1', title: 'Imam Solat Zohor Berjemaah Surau An-Nur', category: 'Solat Berjemaah', points: 20, date: '2026-09-14', recordedBy: 'Ustaz Syaiful' },
       { id: 'gd-2', title: 'Membantu Mengemas & Menyusun Rehal Surau', category: 'Khidmat Surau', points: 15, date: '2026-09-13', recordedBy: 'Ustaz Ahmad Fauzi' },
-      { id: 'gd-3', title: 'Membimbing Rakan Dalam Tasmik Iqra', category: 'Bacaan Al-Quran', points: 15, date: '2026-09-10', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-3', title: 'Membimbing Rakan Dalam Tasmik Iqra', category: 'Bacaan Al-Quran', points: 15, date: '2026-09-10', recordedBy: 'Ustaz Syaiful' }
     ],
     deeds: [
-      { id: 'gd-1', title: 'Imam Solat Zohor Berjemaah Surau An-Nur', category: 'Solat Berjemaah', points: 20, date: '2026-09-14', recordedBy: 'Ustaz Muhammad Harith' },
+      { id: 'gd-1', title: 'Imam Solat Zohor Berjemaah Surau An-Nur', category: 'Solat Berjemaah', points: 20, date: '2026-09-14', recordedBy: 'Ustaz Syaiful' },
       { id: 'gd-2', title: 'Membantu Mengemas & Menyusun Rehal Surau', category: 'Khidmat Surau', points: 15, date: '2026-09-13', recordedBy: 'Ustaz Ahmad Fauzi' },
-      { id: 'gd-3', title: 'Membimbing Rakan Dalam Tasmik Iqra', category: 'Bacaan Al-Quran', points: 15, date: '2026-09-10', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-3', title: 'Membimbing Rakan Dalam Tasmik Iqra', category: 'Bacaan Al-Quran', points: 15, date: '2026-09-10', recordedBy: 'Ustaz Syaiful' }
     ]
   },
   {
@@ -707,13 +707,13 @@ export const sampleSahsiahRecords: StudentSahsiahRecord[] = [
     goodDeedsCount: 3,
     goodDeeds: [
       { id: 'gd-4', title: 'Mendapat Johan Pertandingan Hafazan MQSS', category: 'Kepimpinan', points: 30, date: '2026-09-08', recordedBy: 'Ustazah Siti Aminah' },
-      { id: 'gd-5', title: 'Istiqamah Membaca Al-Quran Pagi Jumaat', category: 'Bacaan Al-Quran', points: 20, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' },
-      { id: 'gd-6', title: 'Membantu Mengajar Tulisan Khat kepada Murid Tahap 1', category: 'Budi Pekerti', points: 20, date: '2026-09-05', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-5', title: 'Istiqamah Membaca Al-Quran Pagi Jumaat', category: 'Bacaan Al-Quran', points: 20, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' },
+      { id: 'gd-6', title: 'Membantu Mengajar Tulisan Khat kepada Murid Tahap 1', category: 'Budi Pekerti', points: 20, date: '2026-09-05', recordedBy: 'Ustaz Syaiful' }
     ],
     deeds: [
       { id: 'gd-4', title: 'Mendapat Johan Pertandingan Hafazan MQSS', category: 'Kepimpinan', points: 30, date: '2026-09-08', recordedBy: 'Ustazah Siti Aminah' },
-      { id: 'gd-5', title: 'Istiqamah Membaca Al-Quran Pagi Jumaat', category: 'Bacaan Al-Quran', points: 20, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' },
-      { id: 'gd-6', title: 'Membantu Mengajar Tulisan Khat kepada Murid Tahap 1', category: 'Budi Pekerti', points: 20, date: '2026-09-05', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-5', title: 'Istiqamah Membaca Al-Quran Pagi Jumaat', category: 'Bacaan Al-Quran', points: 20, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' },
+      { id: 'gd-6', title: 'Membantu Mengajar Tulisan Khat kepada Murid Tahap 1', category: 'Budi Pekerti', points: 20, date: '2026-09-05', recordedBy: 'Ustaz Syaiful' }
     ]
   },
   {
@@ -727,11 +727,11 @@ export const sampleSahsiahRecords: StudentSahsiahRecord[] = [
     goodDeedsCount: 2,
     goodDeeds: [
       { id: 'gd-7', title: 'Bilal Azan Zohor di Surau An-Nur', category: 'Solat Berjemaah', points: 15, date: '2026-09-12', recordedBy: 'Ustaz Ahmad Fauzi' },
-      { id: 'gd-8', title: 'Menyusun Kasut & Selipar Jemaah Surau', category: 'Khidmat Surau', points: 10, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-8', title: 'Menyusun Kasut & Selipar Jemaah Surau', category: 'Khidmat Surau', points: 10, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' }
     ],
     deeds: [
       { id: 'gd-7', title: 'Bilal Azan Zohor di Surau An-Nur', category: 'Solat Berjemaah', points: 15, date: '2026-09-12', recordedBy: 'Ustaz Ahmad Fauzi' },
-      { id: 'gd-8', title: 'Menyusun Kasut & Selipar Jemaah Surau', category: 'Khidmat Surau', points: 10, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' }
+      { id: 'gd-8', title: 'Menyusun Kasut & Selipar Jemaah Surau', category: 'Khidmat Surau', points: 10, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' }
     ]
   },
   {
@@ -744,28 +744,28 @@ export const sampleSahsiahRecords: StudentSahsiahRecord[] = [
     badge: 'Bintang Sahsiah Gangsa',
     goodDeedsCount: 2,
     goodDeeds: [
-      { id: 'gd-9', title: 'Hadir Awal Program Solat Hajat & Yasin', category: 'Solat Berjemaah', points: 15, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' },
+      { id: 'gd-9', title: 'Hadir Awal Program Solat Hajat & Yasin', category: 'Solat Berjemaah', points: 15, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' },
       { id: 'gd-10', title: 'Mengutip Sampah di Koridor Blok Agama', category: 'Budi Pekerti', points: 10, date: '2026-09-09', recordedBy: 'Ustazah Norhafizah' }
     ],
     deeds: [
-      { id: 'gd-9', title: 'Hadir Awal Program Solat Hajat & Yasin', category: 'Solat Berjemaah', points: 15, date: '2026-09-11', recordedBy: 'Ustaz Muhammad Harith' },
+      { id: 'gd-9', title: 'Hadir Awal Program Solat Hajat & Yasin', category: 'Solat Berjemaah', points: 15, date: '2026-09-11', recordedBy: 'Ustaz Syaiful' },
       { id: 'gd-10', title: 'Mengutip Sampah di Koridor Blok Agama', category: 'Budi Pekerti', points: 10, date: '2026-09-09', recordedBy: 'Ustazah Norhafizah' }
     ]
   }
 ];
 
 export const surauDutySchedule: SurauDutyItem[] = [
-  { id: 'sd-1', day: 'Isnin', prayerName: 'Solat Zohor', imamName: 'Ahmad Danial (4 Ibnu Sina)', bilalName: 'Muhammad Faris (4 Ibnu Sina)', tazkirahPresenter: 'Nur Aisyah Humaira', supervisorTeacher: 'Ustaz Muhammad Harith' },
+  { id: 'sd-1', day: 'Isnin', prayerName: 'Solat Zohor', imamName: 'Ahmad Danial (4 Ibnu Sina)', bilalName: 'Muhammad Faris (4 Ibnu Sina)', tazkirahPresenter: 'Nur Aisyah Humaira', supervisorTeacher: 'Ustaz Syaiful' },
   { id: 'sd-2', day: 'Selasa', prayerName: 'Solat Zohor', imamName: 'Muhammad Rayyan (5 Al-Biruni)', bilalName: 'Irfan Naufal (5 Al-Biruni)', tazkirahPresenter: 'Siti Nur Safiyyah', supervisorTeacher: 'Ustaz Ahmad Fauzi' },
   { id: 'sd-3', day: 'Rabu', prayerName: 'Solat Zohor', imamName: 'Harith Iskandar (6 Al-Ghazali)', bilalName: 'Muizuddin (6 Al-Ghazali)', tazkirahPresenter: 'Adam Harith (6 Al-Ghazali)', supervisorTeacher: 'Ustaz Razali bin Omar' },
   { id: 'sd-4', day: 'Khamis', prayerName: 'Solat Zohor', imamName: 'Amirul Asyraf (5 Al-Khawarizmi)', bilalName: 'Hazim Daniel (5 Al-Khawarizmi)', tazkirahPresenter: 'Nur Imanina', supervisorTeacher: 'Ustazah Siti Aminah' },
-  { id: 'sd-5', day: 'Jumaat', prayerName: 'Program Yasin & Kahfi', imamName: 'Ustaz Muhammad Harith', bilalName: 'Ahmad Danial', tazkirahPresenter: 'Ustaz Ahmad Fauzi', supervisorTeacher: 'Semua Guru GPI' }
+  { id: 'sd-5', day: 'Jumaat', prayerName: 'Program Yasin & Kahfi', imamName: 'Ustaz Syaiful', bilalName: 'Ahmad Danial', tazkirahPresenter: 'Ustaz Ahmad Fauzi', supervisorTeacher: 'Semua Guru GPI' }
 ];
 
 export const studentWelfareList: WelfareItem[] = [
   { id: 'wf-1', studentName: 'Muhammad Haziq bin Roslan', className: '4 Al-Farabi', category: 'Anak Yatim', assistanceType: 'Set Lengkap Baju Melayu Sekolah & Songkok', status: 'Diagihkan', sponsor: 'Tabung Kebajikan Panitia PI' },
   { id: 'wf-2', studentName: 'Nur Zulaikha binti Zamri', className: '5 Al-Khawarizmi', category: 'Asnaf Zakat', assistanceType: 'Bantuan Telekung Solat & Beg Sekolah', status: 'Diagihkan', sponsor: 'Zakat MAIWP / Baitulmal' },
-  { id: 'wf-3', studentName: 'Muhammad Hafiz bin Ismail', className: '4 Ibnu Sina', category: 'B40', assistanceType: 'Kupon Makanan RMT & Mushaf Al-Quran Terjemahan', status: 'Diterima', sponsor: 'PIBG SK Seri Saujana' },
+  { id: 'wf-3', studentName: 'Muhammad Hafiz bin Ismail', className: '4 Ibnu Sina', category: 'B40', assistanceType: 'Kupon Makanan RMT & Mushaf Al-Quran Terjemahan', status: 'Diterima', sponsor: 'PIBG SK Merbau Pulas' },
   { id: 'wf-4', studentName: 'Siti Sarah binti Osman', className: '6 Al-Ghazali', category: 'Bantuan Kasih', assistanceType: 'Pakej Peralatan Tulisan Khat & Buku Rujukan', status: 'Dalam Proses', sponsor: 'Kelab Guru & Staf' }
 ];
 
@@ -774,8 +774,8 @@ export const kokoClubsData: KokoClubItem[] = [
     id: 'koko-1',
     name: 'Persatuan Agama Islam (PAI)',
     category: 'Persatuan',
-    advisorTeachers: ['Ustaz Muhammad Harith (Ketua)', 'Ustazah Siti Aminah', 'Ustaz Razali bin Omar'],
-    advisors: ['Ustaz Muhammad Harith (Ketua)', 'Ustazah Siti Aminah', 'Ustaz Razali bin Omar'],
+    advisorTeachers: ['Ustaz Syaiful (Ketua)', 'Ustazah Siti Aminah', 'Ustaz Razali bin Omar'],
+    advisors: ['Ustaz Syaiful (Ketua)', 'Ustazah Siti Aminah', 'Ustaz Razali bin Omar'],
     presidentStudent: 'Ahmad Danial bin Zulkifli (4 Ibnu Sina)',
     president: 'Ahmad Danial bin Zulkifli (4 Ibnu Sina)',
     totalMembers: 78,
@@ -795,8 +795,8 @@ export const kokoClubsData: KokoClubItem[] = [
     id: 'koko-2',
     name: 'Kelab Seni Khat & Tulisan Jawi',
     category: 'Kelab',
-    advisorTeachers: ['Ustaz Muhammad Harith', 'Ustazah Norhafizah binti Yusof'],
-    advisors: ['Ustaz Muhammad Harith', 'Ustazah Norhafizah binti Yusof'],
+    advisorTeachers: ['Ustaz Syaiful', 'Ustazah Norhafizah binti Yusof'],
+    advisors: ['Ustaz Syaiful', 'Ustazah Norhafizah binti Yusof'],
     presidentStudent: 'Nur Aisyah Humaira binti Mohd Fairuz',
     president: 'Nur Aisyah Humaira binti Mohd Fairuz',
     totalMembers: 45,
@@ -840,11 +840,11 @@ export const mqssCompetitionsData: MqssCompetition[] = [
   { id: 'mq-2', title: 'Pertandingan Hafazan Al-Quran (MQSS)', level: 'Negeri', category: 'Hafazan Al-Quran', participantName: 'Nur Aisyah Humaira binti Mohd Fairuz', className: '4 Ibnu Sina', achievement: 'Johan (Emas)', year: 2026 },
   { id: 'mq-3', title: 'Pertandingan Da\'i Cilik Sekolah Rendah', level: 'Daerah', category: 'Da\'i Cilik / Syarahan', participantName: 'Ahmad Danial bin Zulkifli', className: '4 Ibnu Sina', achievement: 'Naib Johan', year: 2026 },
   { id: 'mq-4', title: 'Festival Seni Khat & Jawi MQSS', level: 'Daerah', category: 'Seni Khat', participantName: 'Siti Nur Safiyyah binti Kamaruddin', className: '4 Ibnu Sina', achievement: 'Johan Kategori Sekolah Rendah', year: 2026 },
-  { id: 'mq-5', title: 'Festival Nasyid Sekolah Rendah (FNSR)', level: 'Zon', category: 'Nasyid', participantName: 'Kumpulan Soutul Huffaz SK Seri Saujana', className: 'Tahun 4, 5 & 6', achievement: 'Johan & Persembahan Terbaik', year: 2026 }
+  { id: 'mq-5', title: 'Festival Nasyid Sekolah Rendah (FNSR)', level: 'Zon', category: 'Nasyid', participantName: 'Kumpulan Soutul Huffaz SK Merbau Pulas', className: 'Tahun 4, 5 & 6', achievement: 'Johan & Persembahan Terbaik', year: 2026 }
 ];
 
 export const panitiaMembersList: PanitiaMember[] = [
-  { id: 'p-1', name: 'Muhammad Harith bin Abdullah', salutation: 'Ustaz', role: 'Ketua Panitia Pendidikan Islam', grade: 'DG44 (Guru Cemerlang)', email: 'g-77071151@moe-dl.edu.my', phone: '019-3456789', specialization: 'Al-Quran, Tajwid & Seni Khat', responsibilities: ['Pengurusan Panitia', 'e-RPH & DSKP', 'Penyelarasan Peperiksaan', 'Bimbingan Guru Baharu'] },
+  { id: 'p-1', name: 'Syaiful', salutation: 'Ustaz', role: 'Ketua Panitia Pendidikan Islam', grade: 'DG44 (Guru Cemerlang)', email: 'g-77071151@moe-dl.edu.my', phone: '019-3456789', specialization: 'Al-Quran, Tajwid & Seni Khat', responsibilities: ['Pengurusan Panitia', 'e-RPH & DSKP', 'Penyelarasan Peperiksaan', 'Bimbingan Guru Baharu'] },
   { id: 'p-2', name: 'Siti Aminah binti Haji Hassan', salutation: 'Ustazah', role: 'Setiausaha Panitia & Penyelaras j-QAF', grade: 'DG44', email: 'g-22345678@moe-dl.edu.my', phone: '013-9876543', specialization: 'Bahasa Arab & Ulum Syariah', responsibilities: ['Minit Mesyuarat', 'Data j-QAF & KCJ', 'Penyelaras Bahasa Arab'] },
   { id: 'p-3', name: 'Ahmad Fauzi bin Daud', salutation: 'Ustaz', role: 'Penyelaras Surau An-Nur & Dakwah', grade: 'DG41', email: 'g-33456789@moe-dl.edu.my', phone: '017-6543210', specialization: 'Ibadah, Kem Bestari Solat & Nasyid', responsibilities: ['Pengimarahan Surau', 'Jadual Imam & Bilal', 'Jurulatih Nasyid Sekolah'] },
   { id: 'p-4', name: 'Norhafizah binti Yusof', salutation: 'Ustazah', role: 'Penyelaras Program e-Tasmik & Khatam Al-Quran', grade: 'DG44', email: 'g-44567890@moe-dl.edu.my', phone: '012-3456711', specialization: 'Al-Quran & Pemulihan Jawi (KCJ)', responsibilities: ['Rekod e-Tasmik', 'Majlis Khatam Quran', 'Pemulihan Jawi'] },

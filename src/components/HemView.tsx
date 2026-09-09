@@ -98,7 +98,7 @@ export const HemView: React.FC<HemViewProps> = ({
       imamName: '',
       bilalName: '',
       tazkirahPresenter: '',
-      supervisorTeacher: 'Ustaz Muhammad Harith'
+      supervisorTeacher: 'Ustaz Syaiful'
     }
   });
 
@@ -420,7 +420,7 @@ export const HemView: React.FC<HemViewProps> = ({
                           imamName: '',
                           bilalName: '',
                           tazkirahPresenter: '',
-                          supervisorTeacher: 'Ustaz Muhammad Harith'
+                          supervisorTeacher: 'Ustaz Syaiful'
                         }
                       })
                     }
@@ -793,7 +793,7 @@ export const HemView: React.FC<HemViewProps> = ({
                       student: { ...prev.student, studentName: e.target.value }
                     }))
                   }
-                  placeholder="Contoh: Muhammad Harith bin Zulkifli"
+                  placeholder="Contoh: Muhammad Faris bin Zulkifli"
                   className="w-full bg-slate-900 border border-cyan-500/40 rounded-xl p-2.5 text-slate-200 font-medium focus:border-cyan-400 focus:outline-none"
                   required
                 />

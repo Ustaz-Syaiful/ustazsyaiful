@@ -77,8 +77,8 @@ export const KokoView: React.FC<KokoViewProps> = ({
     id: 'koko-default',
     name: 'Persatuan Agama Islam (PAI)',
     category: 'Persatuan',
-    advisorTeachers: ['Ustaz Muhammad Harith (Ketua)', 'Ustazah Siti Aminah'],
-    advisors: ['Ustaz Muhammad Harith (Ketua)', 'Ustazah Siti Aminah'],
+    advisorTeachers: ['Ustaz Syaiful (Ketua)', 'Ustazah Siti Aminah'],
+    advisors: ['Ustaz Syaiful (Ketua)', 'Ustazah Siti Aminah'],
     presidentStudent: 'Ahmad Danial bin Zulkifli (4 Ibnu Sina)',
     president: 'Ahmad Danial bin Zulkifli (4 Ibnu Sina)',
     totalMembers: 78,
@@ -521,7 +521,7 @@ export const KokoView: React.FC<KokoViewProps> = ({
                   value={advisorsInput}
                   onChange={(e) => setAdvisorsInput(e.target.value)}
                   className="w-full bg-slate-900 border border-cyan-500/40 rounded-xl p-2 font-medium text-slate-200 focus:border-cyan-400 focus:outline-none"
-                  placeholder="Ustaz Muhammad Harith, Ustazah Noraini"
+                  placeholder="Ustaz Syaiful, Ustazah Noraini"
                   required
                 />
               </div>

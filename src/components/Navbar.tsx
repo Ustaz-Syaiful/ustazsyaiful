@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { MainMenuType, PrayerTimeData, MenuItemConfig } from '../types';
+import { MainMenuType, PrayerTimeData, MenuItemConfig, TeacherProfile } from '../types';
+import { defaultMenuItems } from '../data/mockData';
 import {
   Home,
   BookOpen,
@@ -38,6 +39,7 @@ interface NavbarProps {
   menuItems?: MenuItemConfig[];
   onOpenMenuEditor?: () => void;
   onOpenFirebaseModal?: () => void;
+  teacher?: TeacherProfile;
 }
 
 const getMenuIcon = (iconName: string): React.ComponentType<{ className?: string }> => {
@@ -69,21 +71,17 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleAdmin,
   menuItems = [],
   onOpenMenuEditor,
-  onOpenFirebaseModal
+  onOpenFirebaseModal,
+  teacher
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isZoneDropdownOpen, setIsZoneDropdownOpen] = useState(false);
 
-  const fallbackMenuItems = [
-    { id: 'utama' as MainMenuType, label: 'Utama', subLabel: 'Laman Utama', iconName: 'Home', enabled: true },
-    { id: 'kurikulum' as MainMenuType, label: 'Kurikulum', subLabel: 'e-RPH, PBD & DSKP', iconName: 'BookOpen', enabled: true },
-    { id: 'hem' as MainMenuType, label: 'HEM', subLabel: 'Hal Ehwal Murid', iconName: 'Users', enabled: true },
-    { id: 'kokurikulum' as MainMenuType, label: 'Kokurikulum', subLabel: 'PAI, Khat & MQSS', iconName: 'Award', enabled: true },
-    { id: 'umum' as MainMenuType, label: 'Umum', subLabel: 'Direktori & Dokumen', iconName: 'Globe', enabled: true }
-  ];
+  const fallbackMenuItems = defaultMenuItems;
 
-  const effectiveMenuItems = (menuItems && menuItems.length > 0 ? menuItems : fallbackMenuItems)
+  const activeFiltered = (menuItems && menuItems.length > 0 ? menuItems : fallbackMenuItems)
     .filter((m) => m.enabled !== false);
+  const effectiveMenuItems = activeFiltered.length > 0 ? activeFiltered : fallbackMenuItems;
 
   const handlePrint = () => {
     window.print();
@@ -182,49 +180,13 @@ export const Navbar: React.FC<NavbarProps> = ({
                 </span>
               </div>
               <p className="text-xs text-cyan-200/70 font-sans-custom">
-                Ustaz Muhammad Harith • SK Seri Saujana
+                {teacher ? `${teacher.salutation ? `${teacher.salutation} ` : ''}${teacher.name}` : 'Ustaz Syaiful'} • {teacher?.school || 'SK Merbau Pulas'}
               </p>
             </div>
           </div>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-1.5">
-            {effectiveMenuItems.map((item) => {
-              const Icon = getMenuIcon(item.iconName);
-              const isActive = activeMenu === item.id;
-              return (
-                <button
-                  key={item.id}
-                  id={`nav-tab-${item.id}`}
-                  onClick={() => setActiveMenu(item.id)}
-                  className={`relative px-3.5 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center space-x-2.5 font-tech ${
-                    isActive
-                      ? 'bg-gradient-to-r from-cyan-950/90 to-emerald-950/80 text-cyan-200 border border-cyan-400/50 shadow-[0_0_15px_rgba(6,182,212,0.2)]'
-                      : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-amber-300 animate-pulse' : 'text-slate-400'}`} />
-                  <div className="text-left">
-                    <div className="leading-none flex items-center gap-1.5">
-                      <span className="tracking-wide">{item.label.toUpperCase()}</span>
-                      {item.badge && (
-                        <span className="text-[9px] font-bold px-1.5 py-0.2 bg-amber-400 text-slate-950 rounded-full font-mono">
-                          {item.badge}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-[10px] opacity-70 font-normal leading-tight mt-0.5 font-sans-custom">{item.subLabel}</div>
-                  </div>
-                  {isActive && (
-                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-10 h-0.5 bg-gradient-to-r from-cyan-400 to-amber-400 rounded-full shadow-[0_0_6px_#06b6d4]" />
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Quick Actions Desktop */}
-          <div className="hidden md:flex items-center space-x-2">
+          {/* Header Action Buttons */}
+          <div className="flex items-center space-x-2">
             {/* Admin Toggle Button */}
             <button
               onClick={onToggleAdmin}
@@ -256,7 +218,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title="Integrasi Firebase Cloud Firestore"
               >
                 <Database className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="hidden xl:inline">FIREBASE</span>
+                <span className="hidden sm:inline">FIREBASE</span>
               </button>
             )}
 
@@ -266,7 +228,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Jana e-RPH Pantas"
             >
               <Sparkles className="w-3.5 h-3.5 text-slate-950" />
-              <span>+ e-RPH PANTAS</span>
+              <span className="hidden xs:inline">+ e-RPH PANTAS</span>
+              <span className="xs:hidden">+ RPH</span>
             </button>
 
             <button
@@ -276,39 +239,75 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               <Printer className="w-4 h-4" />
             </button>
-          </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex md:hidden items-center space-x-2 font-tech">
-            <button
-              onClick={onToggleAdmin}
-              className={`px-2.5 py-1.5 text-xs font-bold rounded-lg flex items-center space-x-1 ${
-                isAdmin ? 'bg-amber-400 text-slate-950' : 'bg-slate-900 text-cyan-300 border border-cyan-500/30'
-              }`}
-            >
-              <ShieldCheck className="w-3.5 h-3.5" />
-              <span>{isAdmin ? 'ADMIN' : 'LOCK'}</span>
-            </button>
-            <button
-              onClick={onOpenQuickRph}
-              className="px-2.5 py-1.5 text-xs font-bold text-slate-950 bg-gradient-to-r from-cyan-400 to-emerald-400 rounded-lg"
-            >
-              + RPH
-            </button>
+            {/* Mobile Drawer Toggle */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 text-cyan-300 hover:text-white hover:bg-slate-900 rounded-lg border border-cyan-500/20"
+              className="p-2 text-cyan-300 hover:text-white hover:bg-slate-900 rounded-xl border border-cyan-500/20 sm:hidden"
               aria-label="Buka Menu"
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
       </div>
 
+      {/* Primary Navigation Bar Strip - Always Visible on All Screen Sizes */}
+      <div className="bg-[#020d15]/95 border-t border-cyan-500/25 px-4 sm:px-6 lg:px-8 py-2 shadow-inner">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 overflow-x-auto scrollbar-none">
+          <nav className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            {effectiveMenuItems.map((item) => {
+              const Icon = getMenuIcon(item.iconName);
+              const isActive = activeMenu === item.id;
+              return (
+                <button
+                  key={item.id}
+                  id={`nav-tab-${item.id}`}
+                  onClick={() => setActiveMenu(item.id)}
+                  className={`relative px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 flex items-center space-x-2.5 font-tech shrink-0 ${
+                    isActive
+                      ? 'bg-gradient-to-r from-cyan-950 via-cyan-900/60 to-emerald-950 text-cyan-200 border border-cyan-400/60 shadow-[0_0_15px_rgba(6,182,212,0.3)] ring-1 ring-cyan-400/40'
+                      : 'text-slate-300 hover:text-white hover:bg-slate-900/80 border border-transparent'
+                  }`}
+                >
+                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-amber-300 animate-pulse' : 'text-slate-400'}`} />
+                  <div className="text-left">
+                    <div className="leading-none flex items-center gap-1.5">
+                      <span className="tracking-wide font-bold">{item.label.toUpperCase()}</span>
+                      {item.badge && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.2 bg-amber-400 text-slate-950 rounded-full font-mono">
+                          {item.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-[10px] opacity-75 font-normal leading-tight mt-0.5 font-sans-custom hidden md:block">
+                      {item.subLabel}
+                    </div>
+                  </div>
+                  {isActive && (
+                    <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-gradient-to-r from-cyan-400 to-amber-400 rounded-full shadow-[0_0_8px_#06b6d4]" />
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+
+          {isAdmin && onOpenMenuEditor && (
+            <button
+              onClick={onOpenMenuEditor}
+              className="shrink-0 text-xs px-3 py-2 rounded-xl bg-amber-400/15 hover:bg-amber-400/25 text-amber-300 border border-amber-400/40 flex items-center space-x-1.5 font-tech transition shadow-sm"
+              title="Sunting Tajuk & Susunan Menu Portal"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span className="hidden sm:inline font-bold">SUSUNAN MENU</span>
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* Mobile Drawer Menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden bg-slate-950 border-b border-cyan-500/30 px-4 pt-2 pb-5 space-y-2 animate-in fade-in slide-in-from-top-3">
+        <div className="sm:hidden bg-slate-950 border-b border-cyan-500/30 px-4 pt-2 pb-5 space-y-2 animate-in fade-in slide-in-from-top-3">
           <div className="p-2.5 bg-slate-900/90 border border-cyan-500/30 rounded-xl text-xs flex items-center justify-between text-amber-300 mb-2 font-tech">
             <span className="font-mono">{prayerData.hijriDate}</span>
             <button

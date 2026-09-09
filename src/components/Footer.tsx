@@ -47,7 +47,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveMenu }) => {
             <div className="pt-2 text-xs text-cyan-200/80 flex flex-col space-y-1.5 font-sans-custom">
               <div className="flex items-center space-x-2">
                 <School className="w-3.5 h-3.5 text-cyan-400" />
-                <span>SK Seri Saujana (Sekolah Berprestasi Tinggi)</span>
+                <span>SK Merbau Pulas</span>
               </div>
               <div className="flex items-center space-x-2">
                 <Mail className="w-3.5 h-3.5 text-amber-400" />
@@ -210,7 +210,7 @@ export const Footer: React.FC<FooterProps> = ({ setActiveMenu }) => {
 
         {/* Bottom copyright */}
         <div className="mt-8 pt-6 border-t border-cyan-500/20 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 space-y-3 sm:space-y-0 font-sans-custom">
-          <p>© {new Date().getFullYear()} Portal Rasmi Guru Pendidikan Islam • SK Seri Saujana • KPM j-QAF</p>
+          <p>© {new Date().getFullYear()} Portal Rasmi Guru Pendidikan Islam • SK Merbau Pulas • KPM j-QAF</p>
           <div className="flex items-center space-x-4 font-tech">
             <span className="text-cyan-300/70">KONSOL KELUARAN 2.5 • STATUS TELEMETRI: AKTIF</span>
             <button

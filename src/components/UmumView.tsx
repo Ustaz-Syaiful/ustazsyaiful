@@ -251,7 +251,7 @@ export const UmumView: React.FC<UmumViewProps> = ({
 
         <div className="flex items-center space-x-2 text-xs relative z-10">
           <span className="px-3.5 py-1.5 bg-cyan-950/60 border border-cyan-500/40 rounded-xl text-cyan-300 font-medium font-tech tracking-wide shadow-[0_0_10px_rgba(6,182,212,0.15)]">
-            Panitia j-QAF SK Seri Saujana
+            Panitia j-QAF SK Merbau Pulas
           </span>
         </div>
       </div>
@@ -769,7 +769,7 @@ export const UmumView: React.FC<UmumViewProps> = ({
               <CheckCircle2 className="w-10 h-10 text-emerald-400 mx-auto" />
               <h4 className="font-bold text-sm text-emerald-300 font-tech">Mesej Telah Berjaya Dihantar!</h4>
               <p className="text-xs text-emerald-200">
-                Jazakallahu khair. Ustaz Muhammad Harith akan membalas e-mel anda secepat mungkin.
+                Jazakallahu khair. Ustaz Syaiful akan membalas e-mel anda secepat mungkin.
               </p>
             </div>
           ) : (
@@ -851,7 +851,7 @@ export const UmumView: React.FC<UmumViewProps> = ({
                       member: { ...prev.member, name: e.target.value }
                     }))
                   }
-                  placeholder="Ustaz Muhammad Harith bin Zulkifli"
+                  placeholder="Ustaz Syaiful"
                   className="w-full bg-slate-900 border border-cyan-500/40 rounded-xl p-2.5 font-bold text-slate-200 focus:border-cyan-400 focus:outline-none"
                   required
                 />

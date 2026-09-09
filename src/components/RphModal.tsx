@@ -1071,7 +1071,7 @@ ${(formData.mainActivities || []).map((a, i) => `  ${i + 1}) ${a}`).join('\n')}
                   <div className="space-y-8">
                     <p className="font-bold">{isJawi ? 'تانداتاڠن ݢورو تسميع:' : 'Tandatangan Guru Tasmik:'}</p>
                     <div className="border-t border-slate-400 pt-1">
-                      <p className="font-semibold">{isJawi ? 'نام ݢورو: استاد محمد حارث بن عبدالله' : 'Nama Guru: Ustaz Muhammad Harith bin Abdullah'}</p>
+                      <p className="font-semibold">{isJawi ? 'نام ݢورو: استاد سيفول' : 'Nama Guru: Ustaz Syaiful'}</p>
                       <p className="text-[10px] text-slate-600">{isJawi ? 'تاريخ: ........................................' : 'Tarikh: ........................................'}</p>
                     </div>
                   </div>

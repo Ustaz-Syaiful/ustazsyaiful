@@ -84,7 +84,19 @@ export default function App() {
   const [menuItems, setMenuItems] = useState<MenuItemConfig[]>(() => {
     try {
       const saved = localStorage.getItem(`${STORAGE_KEY}_menus`);
-      return saved ? JSON.parse(saved) : defaultMenuItems;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length >= 5) {
+          const hasAllCore = ['utama', 'kurikulum', 'hem', 'kokurikulum', 'umum'].every((id) =>
+            parsed.some((item: any) => item.id === id)
+          );
+          if (hasAllCore) {
+            return parsed.map((item: any) => ({ ...item, enabled: true }));
+          }
+        }
+      }
+      localStorage.setItem(`${STORAGE_KEY}_menus`, JSON.stringify(defaultMenuItems));
+      return defaultMenuItems;
     } catch {
       return defaultMenuItems;
     }
@@ -93,7 +105,21 @@ export default function App() {
   const [teacher, setTeacher] = useState<TeacherProfile>(() => {
     try {
       const saved = localStorage.getItem(`${STORAGE_KEY}_teacher`);
-      return saved ? JSON.parse(saved) : defaultTeacherProfile;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.name === 'Muhammad Harith bin Abdullah' || !parsed.name || parsed.name === 'Muhammad Harith' || parsed.school?.includes('Seri Saujana')) {
+          const updated = {
+            ...parsed,
+            name: 'Syaiful',
+            salutation: 'Ustaz',
+            school: 'SK Merbau Pulas'
+          };
+          localStorage.setItem(`${STORAGE_KEY}_teacher`, JSON.stringify(updated));
+          return updated;
+        }
+        return parsed;
+      }
+      return defaultTeacherProfile;
     } catch {
       return defaultTeacherProfile;
     }
@@ -810,6 +836,7 @@ export default function App() {
           onSelectZone={setSelectedZone}
           onOpenPrayerModal={() => setIsPrayerModalOpen(true)}
           onOpenQuickRph={() => handleOpenRphModal(null)}
+          teacher={teacher}
         />
       </div>
 

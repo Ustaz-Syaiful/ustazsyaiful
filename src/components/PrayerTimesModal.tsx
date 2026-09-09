@@ -177,7 +177,7 @@ export const PrayerTimesModal: React.FC<PrayerTimesModalProps> = ({
                   <span>Penentuan Arah Kiblat di Malaysia</span>
                 </h4>
                 <p>
-                  Arah Kiblat bagi Semenanjung Malaysia secara purata berada pada sudut <b>292° ke 293° dari Utara Benar</b> (Barat Laut). Surau An-Nur SK Seri Saujana telah ditentusahkan oleh Jabatan Mufti Negeri dengan tanda mihrab yang tepat.
+                  Arah Kiblat bagi Semenanjung Malaysia secara purata berada pada sudut <b>292° ke 293° dari Utara Benar</b> (Barat Laut). Surau An-Nur SK Merbau Pulas telah ditentusahkan oleh Jabatan Mufti Negeri dengan tanda mihrab yang tepat.
                 </p>
               </div>
 
