@@ -21,7 +21,8 @@ import {
   FileDown,
   ExternalLink,
   CheckSquare,
-  Square
+  Square,
+  Users
 } from 'lucide-react';
 import { RPHItem, ScriptType } from '../types';
 import {
@@ -31,7 +32,10 @@ import {
   getDateForDayIndex,
   addDaysToDate,
   getSundayOfWeek,
-  getSundayForWeek
+  getSundayForWeek,
+  WEEKLY_CLASS_ITEMS,
+  WeeklyClassItem,
+  isClassSelected
 } from '../utils/weeklyRphGenerator';
 import { exportWeeklyRphToPdf, PdfExportProgress } from '../utils/pdfExportHelper';
 import { isTasmikRph, TASMIK_OFFICIAL_DATA } from '../data/tasmikConstants';
@@ -148,7 +152,16 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     KHAMIS: true
   });
 
-  // Handle week change: updates Sunday and Thursday (5 days default) and resets ticks to all days
+  // Selected classes state: di-tick semua 6 kelas sebagai default
+  const [selectedClasses, setSelectedClasses] = useState<Record<string, boolean>>(() => {
+    const initial: Record<string, boolean> = {};
+    WEEKLY_CLASS_ITEMS.forEach((cls) => {
+      initial[cls.name] = true;
+    });
+    return initial;
+  });
+
+  // Handle week change: updates Sunday and Thursday (5 days default) and resets ticks to all days & classes
   const handleWeekChange = (newWeek: number) => {
     setSelectedWeek(newWeek);
     const sun = getSundayForWeek(newWeek);
@@ -161,6 +174,12 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
       RABU: true,
       KHAMIS: true
     });
+    // Reset all classes to ticked for the new week
+    const allCls: Record<string, boolean> = {};
+    WEEKLY_CLASS_ITEMS.forEach((c) => {
+      allCls[c.name] = true;
+    });
+    setSelectedClasses(allCls);
   };
 
   // Handle start date picker change
@@ -230,7 +249,47 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
     }
   };
 
-  // Group slots by day based on the selected date range and ticked days
+  // Check if all classes are ticked
+  const isAllClassesTicked = useMemo(() => {
+    return WEEKLY_CLASS_ITEMS.every((c) => selectedClasses[c.name] !== false);
+  }, [selectedClasses]);
+
+  // Number of ticked classes
+  const selectedClassCount = useMemo(() => {
+    return WEEKLY_CLASS_ITEMS.filter((c) => selectedClasses[c.name] !== false).length;
+  }, [selectedClasses]);
+
+  // Toggle tick for a single class
+  const handleToggleClass = (className: string) => {
+    setSelectedClasses((prev) => {
+      const current = prev[className] !== false;
+      return {
+        ...prev,
+        [className]: !current
+      };
+    });
+  };
+
+  // Select all classes or untick all
+  const handleSelectAllClasses = () => {
+    if (isAllClassesTicked) {
+      // Untick all so user can choose specific class quickly
+      const next: Record<string, boolean> = {};
+      WEEKLY_CLASS_ITEMS.forEach((c) => {
+        next[c.name] = false;
+      });
+      setSelectedClasses(next);
+    } else {
+      // Tick all 6 classes
+      const next: Record<string, boolean> = {};
+      WEEKLY_CLASS_ITEMS.forEach((c) => {
+        next[c.name] = true;
+      });
+      setSelectedClasses(next);
+    }
+  };
+
+  // Group slots by day based on the selected date range and ticked days & classes
   const { groupedByDay, totalSelectedSlots, totalSelectedDays } = useMemo(() => {
     const baseDays: Array<{
       day: 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
@@ -282,12 +341,17 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         return;
       }
 
+      // 2. Check if class is ticked by user - unticked classes are excluded from view, print, and download
+      if (!isClassSelected(config.className, selectedClasses)) {
+        return;
+      }
+
       const rph =
         weeklyRphs[config.slotNumber - 1] ||
         generateWeekly15Rph(selectedWeek, anchorSunday, activeScript, allRphList)[config.slotNumber - 1];
       const slotDate = getDateForDayIndex(anchorSunday, config.dayIndex);
 
-      // 2. Include slot if its date is within [startDate, endDate]
+      // 3. Include slot if its date is within [startDate, endDate]
       if (slotDate >= startDate && slotDate <= endDate) {
         const targetDay = baseDays.find((d) => d.day === config.day);
         if (targetDay && rph) {
@@ -321,7 +385,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
       totalSelectedSlots: totalSlots,
       totalSelectedDays: activeDays.length
     };
-  }, [weeklyRphs, startDate, endDate, selectedDays, selectedWeek, anchorSunday, activeScript, allRphList]);
+  }, [weeklyRphs, startDate, endDate, selectedDays, selectedClasses, selectedWeek, anchorSunday, activeScript, allRphList]);
 
   // Update a single slot in local state
   const handleUpdateSlot = (slotIndex: number, updatedFields: Partial<RPHItem>) => {
@@ -449,7 +513,7 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                   SK MERBAU PULAS (KBA 5012)
                 </span>
                 <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400/50 font-tech">
-                  {totalSelectedSlots} e-RPH DIPILIH ({totalSelectedDays} HARI)
+                  {totalSelectedSlots} e-RPH DIPILIH ({totalSelectedDays} HARI • {selectedClassCount}/6 KELAS)
                 </span>
               </div>
               <h2 className="text-base sm:text-lg font-bold text-white font-tech tracking-wide mt-0.5">
@@ -673,6 +737,110 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
           </div>
         </div>
 
+        {/* ================= BAR PILIHAN KELAS DIAJAR (KOTAK TICK UNTUK UNTICK JIKA TIDAK MENGAJAR PADA MINGGU TERSEBUT) ================= */}
+        <div className="mt-3.5 pt-3.5 border-t border-cyan-500/25 flex flex-wrap items-center justify-between gap-3 font-tech">
+          <div className="flex flex-wrap items-center gap-2.5">
+            <div className="flex items-center space-x-2 text-xs">
+              <div className="w-7 h-7 rounded-lg bg-emerald-500/20 border border-emerald-400/50 flex items-center justify-center text-emerald-300 shadow-sm">
+                <Users className="w-4 h-4 text-emerald-400" />
+              </div>
+              <div>
+                <span className="font-bold text-emerald-300 uppercase text-[11px] sm:text-xs tracking-wider block">
+                  KOTAK TICK KELAS DIAJAR:
+                </span>
+                <span className="text-[10px] text-slate-400 font-sans hidden md:inline">
+                  Untick kotak jika tidak mengajar kelas berkenaan pada Minggu {selectedWeek}
+                </span>
+              </div>
+            </div>
+
+            {/* Master Toggle: SEMUA KELAS */}
+            <div className="flex flex-wrap items-center gap-1.5 bg-slate-900/90 p-1.5 rounded-xl border border-emerald-500/30 text-xs">
+              <button
+                type="button"
+                onClick={handleSelectAllClasses}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 border ${
+                  isAllClassesTicked
+                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-slate-950 border-emerald-300 shadow-md font-black'
+                    : 'bg-slate-950 text-emerald-300 hover:bg-slate-800 border-emerald-500/40'
+                }`}
+                title={isAllClassesTicked ? 'Nyahpilih (Untick) Semua Kelas' : 'Pilih (Tick) Semua 6 Kelas'}
+              >
+                {isAllClassesTicked ? (
+                  <CheckSquare className="w-3.5 h-3.5 text-slate-950 stroke-[2.5]" />
+                ) : (
+                  <Square className="w-3.5 h-3.5 text-emerald-400" />
+                )}
+                <span>SEMUA KELAS (6)</span>
+              </button>
+
+              <div className="h-4 w-px bg-emerald-500/30 mx-0.5 hidden sm:block" />
+
+              {/* Kotak Tick bagi Setiap Kelas Rasmi yang Diajar */}
+              {WEEKLY_CLASS_ITEMS.map((cls) => {
+                const isTicked = selectedClasses[cls.name] !== false;
+                return (
+                  <button
+                    key={cls.id}
+                    type="button"
+                    onClick={() => handleToggleClass(cls.name)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center space-x-1.5 border ${
+                      isTicked
+                        ? 'bg-emerald-950/90 border-emerald-400 text-emerald-100 ring-1 ring-emerald-500/40 shadow-sm'
+                        : 'bg-slate-950/40 border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-700 opacity-60'
+                    }`}
+                    title={`Klik untuk ${isTicked ? 'nyahpilih (untick) jika tidak mengajar' : 'pilih (tick)'} Kelas ${cls.fullLabel} (${cls.count} slot e-RPH)`}
+                  >
+                    {isTicked ? (
+                      <CheckSquare className="w-3.5 h-3.5 text-emerald-400 shrink-0 stroke-[2.5]" />
+                    ) : (
+                      <Square className="w-3.5 h-3.5 text-slate-600 shrink-0" />
+                    )}
+                    <span className={isTicked ? 'text-white font-black' : 'text-slate-500'}>
+                      {cls.shortLabel}
+                    </span>
+                    <span className={`text-[10px] hidden sm:inline ${isTicked ? 'text-emerald-300/80 font-medium' : 'text-slate-600'}`}>
+                      {cls.fullLabel}
+                    </span>
+                    <span
+                      className={`text-[10px] px-1.5 py-0.2 rounded font-mono font-bold ${
+                        isTicked ? 'bg-emerald-900/70 text-emerald-300' : 'bg-slate-900 text-slate-600'
+                      }`}
+                    >
+                      {cls.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Status & Petunjuk Kelas Aktif */}
+          <div className="flex items-center space-x-2">
+            {!isAllClassesTicked ? (
+              <div className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-amber-950/70 border border-amber-500/50 text-amber-300 text-xs shadow-md animate-pulse">
+                <span className="w-2 h-2 rounded-full bg-amber-400 shrink-0" />
+                <span className="font-bold text-[11px]">
+                  {6 - selectedClassCount} KELAS DI-UNTICK (TIDAK MENGAJAR MINGGU INI)
+                </span>
+                <button
+                  type="button"
+                  onClick={handleSelectAllClasses}
+                  className="ml-1 text-[10px] text-cyan-300 hover:text-white underline font-bold"
+                  title="Tick semula semua kelas yang diajar"
+                >
+                  [TICK SEMUA KELAS]
+                </button>
+              </div>
+            ) : (
+              <span className="text-[11px] text-emerald-400/90 font-mono px-2.5 py-1 rounded-lg bg-emerald-950/50 border border-emerald-500/30 hidden md:inline-flex items-center space-x-1.5">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>SEMUA 6 KELAS DIAJAR ({totalSelectedSlots} SLOT AKTIF)</span>
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Petunjuk Tema Warna e-RPH Ceria Mengikut Bidang */}
         <div className="mt-3.5 pt-3 border-t border-cyan-500/20 flex flex-wrap items-center justify-between gap-2.5">
           <div className="flex items-center space-x-2 text-xs">
@@ -735,20 +903,39 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         className="w-full max-w-6xl mx-auto space-y-8 pb-16"
       >
         {groupedByDay.length === 0 ? (
-          <div className="p-8 text-center bg-slate-900/50 rounded-2xl border border-cyan-500/30 space-y-2 font-tech">
-            <p className="text-sm text-cyan-300">
-              Tiada slot e-RPH pada hari atau julat tarikh yang dipilih ({startDate} hingga {endDate}).
+          <div className="p-8 text-center bg-slate-900/60 rounded-2xl border border-cyan-500/30 space-y-3 font-tech">
+            <p className="text-base text-cyan-300 font-bold">
+              Tiada slot e-RPH untuk dipaparkan pada tetapan semasa.
             </p>
-            <p className="text-xs text-slate-400">
-              Sila pastikan sekurang-kurangnya satu hari persekolahan (Ahad hingga Khamis) di-tick.
+            <p className="text-xs text-slate-400 max-w-md mx-auto">
+              Semua kelas yang diajar atau hari persekolahan ({startDate} hingga {endDate}) mungkin telah di-untick. Sila tick sekurang-kurangnya satu hari dan satu kelas untuk melihat e-RPH.
             </p>
-            <button
-              type="button"
-              onClick={handleSelectAllDays}
-              className="mt-2 px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 rounded-xl text-xs font-bold hover:brightness-110 transition shadow"
-            >
-              Tick Semua Hari (Ahad - Khamis)
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
+              <button
+                type="button"
+                onClick={handleSelectAllDays}
+                className="px-3.5 py-2 bg-slate-900 border border-cyan-500/40 text-cyan-300 rounded-xl text-xs font-bold hover:bg-slate-800 transition"
+              >
+                Tick Semua Hari (5 Hari)
+              </button>
+              <button
+                type="button"
+                onClick={handleSelectAllClasses}
+                className="px-3.5 py-2 bg-slate-900 border border-emerald-500/40 text-emerald-300 rounded-xl text-xs font-bold hover:bg-slate-800 transition"
+              >
+                Tick Semua Kelas (6 Kelas)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  handleSelectAllDays();
+                  handleSelectAllClasses();
+                }}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 text-slate-950 rounded-xl text-xs font-bold hover:brightness-110 transition shadow-lg"
+              >
+                Tick Semua Hari & Kelas (Penuh)
+              </button>
+            </div>
           </div>
         ) : (
           groupedByDay.map((dayGroup) => (
@@ -809,8 +996,22 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           )}
                         </div>
 
-                        {/* Screen-only Controls (Status selector & Full Edit button) */}
+                        {/* Screen-only Controls (Status selector, Untick Class, & Full Edit button) */}
                         <div className="flex items-center space-x-2 print:hidden font-tech">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              handleToggleClass(config.className);
+                              setSaveSuccessMsg(`Kelas "${config.className}" telah di-untick untuk Minggu ${selectedWeek}.`);
+                              setTimeout(() => setSaveSuccessMsg(null), 3500);
+                            }}
+                            className="px-2.5 py-1 bg-slate-900 hover:bg-rose-950/60 hover:text-rose-300 text-slate-400 font-bold rounded-lg text-xs border border-slate-700/60 flex items-center space-x-1 transition"
+                            title={`Untick kelas ${config.className} jika tidak mengajar pada minggu ini`}
+                          >
+                            <Square className="w-3 h-3 text-rose-400" />
+                            <span className="hidden sm:inline">UNTICK KELAS</span>
+                          </button>
+
                           <select
                             value={rph.status}
                             onChange={(e) => handleUpdateSlot(slotIndex, { status: e.target.value as any })}

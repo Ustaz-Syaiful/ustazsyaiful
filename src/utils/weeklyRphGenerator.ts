@@ -282,6 +282,54 @@ export const WEEKLY_15_SLOTS: WeeklySlotConfig[] = [
   }
 ];
 
+export interface WeeklyClassItem {
+  id: string;
+  name: string; // Full config name e.g. '1 IBNU SINA (1 IS)'
+  shortLabel: string; // '1 IS'
+  fullLabel: string; // '1 IBNU SINA'
+  yearLevel: 'Tahun 1' | 'Tahun 2' | 'Tahun 3' | 'Tahun 4' | 'Tahun 6';
+  count: number;
+}
+
+/**
+ * The 6 distinct classes taught by the GPI teacher across 15 weekly slots
+ */
+export const WEEKLY_CLASS_ITEMS: WeeklyClassItem[] = [
+  { id: '1-IS', name: '1 IBNU SINA (1 IS)', shortLabel: '1 IS', fullLabel: '1 IBNU SINA', yearLevel: 'Tahun 1', count: 1 },
+  { id: '2-IS', name: '2 IBNU SINA (2 IS)', shortLabel: '2 IS', fullLabel: '2 IBNU SINA', yearLevel: 'Tahun 2', count: 2 },
+  { id: '3-IS', name: '3 IBNU SINA (3 IS)', shortLabel: '3 IS', fullLabel: '3 IBNU SINA', yearLevel: 'Tahun 3', count: 1 },
+  { id: '4-IS', name: '4 IBNU SINA (4 IS)', shortLabel: '4 IS', fullLabel: '4 IBNU SINA', yearLevel: 'Tahun 4', count: 1 },
+  { id: '6-IS', name: '6 IBNU SINA (6 IS)', shortLabel: '6 IS', fullLabel: '6 IBNU SINA', yearLevel: 'Tahun 6', count: 5 },
+  { id: '6-IK', name: '6 IBNU KHALDUN (6 IK)', shortLabel: '6 IK', fullLabel: '6 IBNU KHALDUN', yearLevel: 'Tahun 6', count: 5 }
+];
+
+/**
+ * Checks whether a given class name is ticked (selected)
+ */
+export function isClassSelected(
+  className: string,
+  selectedClasses: Record<string, boolean>
+): boolean {
+  if (!className) return true;
+  if (selectedClasses[className] !== undefined) {
+    return selectedClasses[className];
+  }
+  const target = className.toUpperCase().trim();
+  for (const [key, val] of Object.entries(selectedClasses)) {
+    if (val === false) {
+      const normKey = key.toUpperCase().trim();
+      if (target === normKey) return false;
+      if (target.includes('1 IBNU SINA') && normKey.includes('1 IBNU SINA')) return false;
+      if (target.includes('2 IBNU SINA') && normKey.includes('2 IBNU SINA')) return false;
+      if (target.includes('3 IBNU SINA') && normKey.includes('3 IBNU SINA')) return false;
+      if (target.includes('4 IBNU SINA') && normKey.includes('4 IBNU SINA')) return false;
+      if (target.includes('6 IBNU SINA') && normKey.includes('6 IBNU SINA')) return false;
+      if (target.includes('6 IBNU KHALDUN') && normKey.includes('6 IBNU KHALDUN')) return false;
+    }
+  }
+  return true;
+}
+
 /**
  * Calculates date for each day index (0=Ahad, 1=Isnin, 2=Selasa, 3=Rabu, 4=Khamis)
  * based on a Sunday start date.
