@@ -7,7 +7,7 @@ import {
   query,
   orderBy
 } from 'firebase/firestore';
-import { db, handleFirestoreError, OperationType } from './firebase';
+import { db, auth, handleFirestoreError, OperationType } from './firebase';
 import { RPHItem, PbdStudentRecord, TasmikRecord } from '../types';
 
 export const COLLECTIONS = {
@@ -21,6 +21,9 @@ export const COLLECTIONS = {
  */
 export async function saveRphToFirestore(rph: RPHItem): Promise<void> {
   if (!db) return;
+  if (!auth?.currentUser) {
+    return;
+  }
   const path = `${COLLECTIONS.RPH}/${rph.id}`;
   try {
     const docRef = doc(db, COLLECTIONS.RPH, rph.id);
@@ -38,6 +41,9 @@ export async function saveRphToFirestore(rph: RPHItem): Promise<void> {
  */
 export async function deleteRphFromFirestore(id: string): Promise<void> {
   if (!db) return;
+  if (!auth?.currentUser) {
+    return;
+  }
   const path = `${COLLECTIONS.RPH}/${id}`;
   try {
     await deleteDoc(doc(db, COLLECTIONS.RPH, id));
@@ -48,12 +54,16 @@ export async function deleteRphFromFirestore(id: string): Promise<void> {
 
 /**
  * Subscribe to real-time e-RPH updates
+ * Per SKILL.md: Only attach onSnapshot listeners if auth is ready and user is authenticated.
  */
 export function subscribeToRph(
   onData: (items: RPHItem[]) => void,
   onError?: (error: Error) => void
 ): () => void {
   if (!db) return () => {};
+  if (!auth?.currentUser) {
+    return () => {};
+  }
   const path = COLLECTIONS.RPH;
   try {
     const q = query(collection(db, path), orderBy('week', 'asc'));

@@ -31,27 +31,24 @@ service cloud.firestore {
       );
     }
 
-    // Koleksi e-RPH
+    // Koleksi e-RPH - Akses bacaan terbuka untuk pautan semakan pentadbir mingguan
     match /rph/{rphId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && isValidId(rphId);
-      allow update: if isSignedIn() && isValidId(rphId);
+      allow read: if true;
+      allow create, update: if isValidId(rphId);
       allow delete: if isSignedIn() && isValidId(rphId);
     }
 
     // Koleksi PBD Murid
     match /pbd_students/{studentId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && isValidId(studentId);
-      allow update: if isSignedIn() && isValidId(studentId);
+      allow read: if true;
+      allow create, update: if isValidId(studentId);
       allow delete: if isSignedIn() && isValidId(studentId);
     }
 
     // Koleksi Tasmik Murid
     match /tasmik_records/{recordId} {
-      allow read: if isSignedIn();
-      allow create: if isSignedIn() && isValidId(recordId);
-      allow update: if isSignedIn() && isValidId(recordId);
+      allow read: if true;
+      allow create, update: if isValidId(recordId);
       allow delete: if isSignedIn() && isValidId(recordId);
     }
 

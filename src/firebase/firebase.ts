@@ -12,6 +12,7 @@ import {
   signInWithPopup,
   signOut,
   onAuthStateChanged,
+  signInAnonymously,
   User
 } from 'firebase/auth';
 
@@ -152,6 +153,21 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
   throw new Error(JSON.stringify(errInfo));
 }
 
+// Attempt graceful anonymous auth so visitors and admins can read if enabled
+export async function ensureFirebaseAuth(): Promise<User | null> {
+  const { auth: currentAuth } = initFirebase();
+  if (!currentAuth) return null;
+  if (currentAuth.currentUser) return currentAuth.currentUser;
+
+  try {
+    const cred = await signInAnonymously(currentAuth);
+    return cred.user;
+  } catch (err) {
+    // Graceful fallback if anonymous provider is not enabled in Firebase project
+    return null;
+  }
+}
+
 // Test connectivity when app boots
 export async function testFirestoreConnection(database: Firestore): Promise<boolean> {
   try {
@@ -165,5 +181,5 @@ export async function testFirestoreConnection(database: Firestore): Promise<bool
   }
 }
 
-export { app, db, auth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged };
+export { app, db, auth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, signInAnonymously };
 export type { User };

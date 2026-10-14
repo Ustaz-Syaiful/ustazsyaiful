@@ -61,6 +61,8 @@ import {
   initFirebase,
   isFirebaseConfigured,
   testFirestoreConnection,
+  onAuthStateChanged,
+  ensureFirebaseAuth,
   db
 } from './firebase/firebase';
 import {
@@ -75,7 +77,29 @@ const STORAGE_KEY = 'portal_gpi_app_data_v2';
 export default function App() {
   const [isAdmin, setIsAdmin] = useState<boolean>(true);
   const [notification, setNotification] = useState<string | null>(null);
-  const [activeMenu, setActiveMenu] = useState<MainMenuType>('utama');
+  const [activeMenu, setActiveMenu] = useState<MainMenuType>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        if (
+          params.get('minggu') ||
+          params.get('week') ||
+          params.get('mode') === 'semakan' ||
+          params.get('subTab') === 'rph' ||
+          params.get('tab') === 'kurikulum'
+        ) {
+          return 'kurikulum';
+        }
+        const tabParam = params.get('tab') as MainMenuType;
+        if (tabParam && ['utama', 'kurikulum', 'hem', 'kokurikulum', 'umum'].includes(tabParam)) {
+          return tabParam;
+        }
+      } catch (e) {
+        // Fallback
+      }
+    }
+    return 'utama';
+  });
   const [selectedZone, setSelectedZone] = useState<string>('WLY01');
   const [isMenuEditorOpen, setIsMenuEditorOpen] = useState(false);
   const [isFirebaseModalOpen, setIsFirebaseModalOpen] = useState(false);
@@ -333,31 +357,49 @@ export default function App() {
     duasList
   ]);
 
-  // Firebase Boot and Synchronization
+  // Firebase Boot and Synchronization (Complies with SKILL.md: only attach onSnapshot when auth is authenticated)
   useEffect(() => {
     if (isFirebaseConfigured()) {
-      const { db: firestoreDb } = initFirebase();
-      if (firestoreDb) {
+      const { db: firestoreDb, auth: currentAuth } = initFirebase();
+      if (firestoreDb && currentAuth) {
         testFirestoreConnection(firestoreDb).catch(() => {});
 
-        // Realtime RPH synchronization
-        const unsubscribe = subscribeToRph(
-          (remoteRphs) => {
-            if (remoteRphs && remoteRphs.length > 0) {
-              setRphList((prev) => {
-                const map = new Map<string, RPHItem>();
-                prev.forEach((item) => map.set(item.id, item));
-                remoteRphs.forEach((item) => map.set(item.id, item));
-                return Array.from(map.values());
-              });
-            }
-          },
-          (err) => {
-            console.warn('Ralat langganan Firestore RPH:', err);
-          }
-        );
+        // Try graceful anonymous authentication if enabled
+        ensureFirebaseAuth().catch(() => {});
 
-        return () => unsubscribe();
+        let unsubscribeRph: (() => void) | null = null;
+
+        const unsubscribeAuth = onAuthStateChanged(currentAuth, (user) => {
+          if (unsubscribeRph) {
+            unsubscribeRph();
+            unsubscribeRph = null;
+          }
+
+          if (user) {
+            unsubscribeRph = subscribeToRph(
+              (remoteRphs) => {
+                if (remoteRphs && remoteRphs.length > 0) {
+                  setRphList((prev) => {
+                    const map = new Map<string, RPHItem>();
+                    prev.forEach((item) => map.set(item.id, item));
+                    remoteRphs.forEach((item) => map.set(item.id, item));
+                    return Array.from(map.values());
+                  });
+                }
+              },
+              (err) => {
+                console.warn('Ralat langganan Firestore RPH:', err);
+              }
+            );
+          }
+        });
+
+        return () => {
+          unsubscribeAuth();
+          if (unsubscribeRph) {
+            unsubscribeRph();
+          }
+        };
       }
     }
   }, []);

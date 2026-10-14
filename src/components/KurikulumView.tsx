@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   RPHItem,
   DskpItem,
@@ -93,7 +93,41 @@ export const KurikulumView: React.FC<KurikulumViewProps> = ({
   onDeletePdpcModule,
   onOpenQuizModal
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'jadual' | 'rph' | 'rpt' | 'dskp' | 'pbd' | 'tasmik' | 'pdpc'>('jadual');
+  // Check URL query parameters for direct deep-linking
+  const urlParams = useMemo(() => {
+    if (typeof window === 'undefined') return { week: null, isReview: false, subTab: null };
+    try {
+      const p = new URLSearchParams(window.location.search);
+      const m = p.get('minggu') || p.get('week');
+      const parsedWeek = m ? parseInt(m, 10) : null;
+      const validWeek = parsedWeek && parsedWeek >= 1 && parsedWeek <= 43 ? parsedWeek : null;
+      const isReview = p.get('mode') === 'semakan' || p.get('semakan') === '1';
+      const sub = p.get('subTab') || (validWeek || isReview ? 'rph' : null);
+      return {
+        week: validWeek,
+        isReview,
+        subTab: sub
+      };
+    } catch {
+      return { week: null, isReview: false, subTab: null };
+    }
+  }, []);
+
+  const [activeSubTab, setActiveSubTab] = useState<'jadual' | 'rph' | 'rpt' | 'dskp' | 'pbd' | 'tasmik' | 'pdpc'>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        if (p.get('minggu') || p.get('week') || p.get('mode') === 'semakan' || p.get('subTab') === 'rph') {
+          return 'rph';
+        }
+        const sub = p.get('subTab') as any;
+        if (['jadual', 'rph', 'rpt', 'dskp', 'pbd', 'tasmik', 'pdpc'].includes(sub)) {
+          return sub;
+        }
+      } catch (e) {}
+    }
+    return 'jadual';
+  });
   const [rphMode, setRphMode] = useState<'weekly-15' | 'collection'>('weekly-15');
   const [dskpRptMode, setDskpRptMode] = useState<'rpt' | 'dskp'>('rpt');
   const [rphScriptView, setRphScriptView] = useState<ScriptType>('jawi');
@@ -529,8 +563,8 @@ export const KurikulumView: React.FC<KurikulumViewProps> = ({
 
           {rphMode === 'weekly-15' ? (
             <WeeklyRphStackView
-              initialWeek={33}
-              initialStartDate="2026-01-18"
+              initialWeek={urlParams.week || 33}
+              initialReviewMode={urlParams.isReview}
               allRphList={rphList}
               onSaveRph={(savedRph, silent) => {
                 if (onSaveRph) {

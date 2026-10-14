@@ -22,7 +22,9 @@ import {
   ExternalLink,
   CheckSquare,
   Square,
-  Users
+  Users,
+  Share2,
+  ShieldCheck
 } from 'lucide-react';
 import { RPHItem, ScriptType } from '../types';
 import {
@@ -43,6 +45,12 @@ import { getJawiRph } from '../utils/jawiConverter';
 import { DatePickerField } from './DatePickerField';
 import { saveOrUpdateRptFromRph } from '../utils/rptStorage';
 import { getBidangTheme, BIDANG_THEMES, BidangTheme } from '../utils/bidangColors';
+import { AdminShareLinkModal } from './AdminShareLinkModal';
+import {
+  AdminVerificationBar,
+  getAdminReviewForWeek,
+  AdminReviewRecord
+} from './AdminVerificationBar';
 
 export type DayKey = 'AHAD' | 'ISNIN' | 'SELASA' | 'RABU' | 'KHAMIS';
 
@@ -62,6 +70,7 @@ export const DAY_SELECTION_ITEMS: Array<{
 interface WeeklyRphStackViewProps {
   initialWeek?: number;
   initialStartDate?: string;
+  initialReviewMode?: boolean;
   allRphList: RPHItem[];
   onSaveRph: (rph: RPHItem, silent?: boolean) => void;
   onOpenDetailedModal: (rph: RPHItem) => void;
@@ -70,14 +79,51 @@ interface WeeklyRphStackViewProps {
 export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
   initialWeek = 33,
   initialStartDate,
+  initialReviewMode = false,
   allRphList = [],
   onSaveRph,
   onOpenDetailedModal
 }) => {
-  const [selectedWeek, setSelectedWeek] = useState<number>(initialWeek);
+  const [selectedWeek, setSelectedWeek] = useState<number>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        const m = p.get('minggu') || p.get('week');
+        if (m) {
+          const parsed = parseInt(m, 10);
+          if (!isNaN(parsed) && parsed >= 1 && parsed <= 43) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+    return initialWeek;
+  });
+
+  const [isReviewMode, setIsReviewMode] = useState<boolean>(() => {
+    if (initialReviewMode) return true;
+    if (typeof window !== 'undefined') {
+      try {
+        const p = new URLSearchParams(window.location.search);
+        return p.get('mode') === 'semakan' || p.get('semakan') === '1';
+      } catch (e) {}
+    }
+    return false;
+  });
+
+  const [isShareModalOpen, setIsShareModalOpen] = useState<boolean>(false);
+  const [adminReview, setAdminReview] = useState<AdminReviewRecord>(() =>
+    getAdminReviewForWeek(selectedWeek)
+  );
 
   // Default: 5 days starting from Sunday to Thursday
-  const defaultSunday = initialStartDate || getSundayForWeek(initialWeek);
+  const defaultSunday = useMemo(() => {
+    if (initialStartDate && selectedWeek === initialWeek) {
+      return initialStartDate;
+    }
+    return getSundayForWeek(selectedWeek);
+  }, [initialStartDate, selectedWeek, initialWeek]);
+
   const [startDate, setStartDate] = useState<string>(defaultSunday);
   const [endDate, setEndDate] = useState<string>(() => addDaysToDate(defaultSunday, 4));
 
@@ -86,6 +132,48 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
   const [saveSuccessMsg, setSaveSuccessMsg] = useState<string | null>(null);
   const [pdfProgress, setPdfProgress] = useState<PdfExportProgress | null>(null);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
+
+  // Sync admin review whenever selectedWeek changes
+  useEffect(() => {
+    setAdminReview(getAdminReviewForWeek(selectedWeek));
+  }, [selectedWeek]);
+
+  // Listen for admin review changes
+  useEffect(() => {
+    const handleReviewUpdated = (e: Event) => {
+      const customEvent = e as CustomEvent<AdminReviewRecord>;
+      if (customEvent.detail && customEvent.detail.week === selectedWeek) {
+        setAdminReview(customEvent.detail);
+      }
+    };
+    window.addEventListener('admin_review_updated', handleReviewUpdated);
+    return () => window.removeEventListener('admin_review_updated', handleReviewUpdated);
+  }, [selectedWeek]);
+
+  // Sync browser URL whenever selectedWeek or isReviewMode changes so that current URL is always shareable
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', 'kurikulum');
+        url.searchParams.set('subTab', 'rph');
+        url.searchParams.set('minggu', String(selectedWeek));
+        if (isReviewMode) {
+          url.searchParams.set('mode', 'semakan');
+        } else {
+          url.searchParams.delete('mode');
+        }
+        window.history.replaceState({}, '', url.toString());
+      } catch (e) {}
+    }
+  }, [selectedWeek, isReviewMode]);
+
+  // Handle external prop changes to initialWeek
+  useEffect(() => {
+    if (initialWeek && initialWeek !== selectedWeek) {
+      handleWeekChange(initialWeek);
+    }
+  }, [initialWeek]);
 
   // Anchor Sunday corresponding to the current startDate
   const anchorSunday = useMemo(() => getSundayOfWeek(startDate), [startDate]);
@@ -725,6 +813,32 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
               <span>SIMPAN e-RPH & RPT ({totalSelectedSlots})</span>
             </button>
 
+            {/* Butang Pautan Khas Pentadbir */}
+            <button
+              type="button"
+              onClick={() => setIsShareModalOpen(true)}
+              className="px-3.5 py-1.5 bg-gradient-to-r from-indigo-500 via-blue-500 to-cyan-500 hover:from-indigo-400 hover:to-cyan-400 text-white font-black text-xs rounded-xl transition flex items-center space-x-1.5 shadow-lg shadow-indigo-900/40 ring-1 ring-white/20 font-tech"
+              title={`Buka dan salin pautan khas semakan pentadbir bagi Minggu ${selectedWeek}`}
+            >
+              <Share2 className="w-3.5 h-3.5 text-white stroke-[2.5]" />
+              <span>LINK PENTADBIR (M{selectedWeek})</span>
+            </button>
+
+            {/* Mod Semakan Pentadbir Toggle */}
+            <button
+              type="button"
+              onClick={() => setIsReviewMode(!isReviewMode)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center space-x-1.5 border font-tech ${
+                isReviewMode
+                  ? 'bg-indigo-500/30 text-indigo-200 border-indigo-400/60 shadow-md ring-1 ring-indigo-400/40'
+                  : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'
+              }`}
+              title={isReviewMode ? 'Tutup paparan borang semakan pentadbir' : 'Buka paparan borang semakan & pengesahan pentadbir'}
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-indigo-400" />
+              <span>{isReviewMode ? 'SEMAKAN AKTIF' : 'MOD SEMAKAN'}</span>
+            </button>
+
             {/* Reset ke RPT */}
             <button
               type="button"
@@ -897,6 +1011,21 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
         )}
       </div>
 
+      {/* ================= MOD SEMAKAN PENTADBIR SECTION ================= */}
+      {isReviewMode && (
+        <div className="w-full max-w-6xl mx-auto mb-6 print:mb-4">
+          <AdminVerificationBar
+            selectedWeek={selectedWeek}
+            totalSlots={totalSelectedSlots}
+            startDate={startDate}
+            endDate={endDate}
+            teacherName="Ustaz Syaiful"
+            schoolName="SK Merbau Pulas (KBA 5012)"
+            onReviewSaved={(rec) => setAdminReview(rec)}
+          />
+        </div>
+      )}
+
       {/* ================= SUSUNAN e-RPH MENGIKUT JULAT TARIKH ================= */}
       <div
         id="weekly-rph-print-container"
@@ -992,6 +1121,12 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           {isTasmik && (
                             <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 font-tech print:px-2.5 print:py-0.5 print:text-[9.5px]">
                               FORMAT TASMIK
+                            </span>
+                          )}
+                          {adminReview.status === 'DISEMAK_DISAHKAN' && (
+                            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/50 font-tech flex items-center space-x-1 print:bg-emerald-50 print:text-emerald-900 print:border-emerald-600 print:px-2 print:py-0.2 print:text-[8.5px]">
+                              <Check className="w-3 h-3 text-emerald-400 print:text-emerald-700" />
+                              <span>DISEMAK PENTADBIR</span>
                             </span>
                           )}
                         </div>
@@ -1430,8 +1565,15 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
                           </div>
                         </div>
 
-                        <div className="pt-1 border-t border-slate-700/60 print:border-slate-300 text-xs font-medium text-slate-400 print:text-slate-700">
-                          Disemak Oleh: Guru Besar @ Penolong Kanan (SK Merbau Pulas)
+                        <div className="pt-1 border-t border-slate-700/60 print:border-slate-300 text-xs font-medium text-slate-400 print:text-slate-700 flex flex-wrap items-center justify-between gap-1">
+                          <span>
+                            Disemak Oleh: {adminReview.verifiedBy || 'Guru Besar @ Penolong Kanan'} (SK Merbau Pulas)
+                          </span>
+                          {adminReview.status === 'DISEMAK_DISAHKAN' && (
+                            <span className="font-bold text-emerald-400 print:text-emerald-800 text-[11px] print:text-[9.5px]">
+                              [✓ TELAH DISEMAK & DISAHKAN {adminReview.verifiedAt ? `• ${adminReview.verifiedAt}` : ''}]
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1442,6 +1584,20 @@ export const WeeklyRphStackView: React.FC<WeeklyRphStackViewProps> = ({
           ))
         )}
       </div>
+
+      {/* ================= MODAL KONGSI PAUTAN SEMAKAN PENTADBIR ================= */}
+      <AdminShareLinkModal
+        isOpen={isShareModalOpen}
+        onClose={() => setIsShareModalOpen(false)}
+        selectedWeek={selectedWeek}
+        onSelectWeek={(w) => handleWeekChange(w)}
+        startDate={startDate}
+        endDate={endDate}
+        totalSlots={totalSelectedSlots}
+        isReviewMode={isReviewMode}
+        onToggleReviewMode={(val) => setIsReviewMode(val)}
+        verificationStatus={adminReview}
+      />
     </div>
   );
 };
